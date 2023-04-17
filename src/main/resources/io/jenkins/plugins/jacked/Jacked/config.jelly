@@ -1,19 +1,24 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:section title="My Plugin Configuration">
+
+  <f:section title="Jacked Configuration">
     <f:entry title="Scan Name" field="scanName">
       <f:textbox name="scanName" />
     </f:entry>
-    <f:entry title="Select Fail Criteria">
-      <f:select name="selectedFailCriteria" selected="${instance.selectedFailCriteria}">
-        <f:option value="">--Please select--</f:option>
-        <f:option value="critical">Critical</f:option>
-        <f:option value="high">High</f:option>
-        <f:option value="medium">Medium</f:option>
-        <f:option value="low">Low</f:option>
-        <f:option value="negligible">Negligible</f:option>
-        <f:option value="unknown">Unknown</f:option>
-      </f:select>
-    </f:entry>
+
+    <f:entry title="Select Severity Level">
+    <f:select class="setting-input" name="selectedSeverityLevel">
+      <j:forEach items="${instance.doFillItems()}" var="level">
+        <f:option value="${level.value}">${level.name}</f:option>
+      </j:forEach>
+    </f:select>
+
+    <f:entry field="autoInstall">
+      <f:checkbox default="false"/>
+      <label>${%Download and install jacked automatically}</label>
+    </f:entry> 
+  </f:entry>
+
+  
   </f:section>
 </j:jelly>
