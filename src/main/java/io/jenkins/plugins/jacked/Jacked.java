@@ -8,8 +8,6 @@ import java.net.URL;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -19,6 +17,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import io.jenkins.plugins.jacked.install.ExecuteBinary;
+import io.jenkins.plugins.jacked.install.InstallBinary;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
@@ -26,9 +26,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private static final String SCAN_TARGET_DEFAULT = "dir:/";
     private static final String REP_NAME_DEFAULT = "jackedReport_${JOB_NAME}_${BUILD_NUMBER}.txt";
 
+    private static final String JACKED = "jacked";
+
     private String scanDest;
     private String repName;
-    private String jackedArg;
+    private String scanName;
+    private String selectedFailCriteria;
 
     public String getScanDest() {
         return scanDest;
@@ -46,97 +49,50 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.repName = repName;
     }
 
-    public String getJackedArg() {
-        return jackedArg;
+    public String getScanName() {
+        return scanName;
     }
 
-    public void setJackedArg(String jackedArg) {
-        this.jackedArg = jackedArg;
+    public void setScanName(String scanName) {
+        this.scanName = scanName;
+    }
+
+    public String getSelectedFailCriteria() {
+        return selectedFailCriteria;
+    }
+
+    public void setSelectedFailCriteria(String selectedFailCriteria) {
+        this.selectedFailCriteria = selectedFailCriteria;
     }
 
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String jackedArg) {
+    public Jacked(String scanDest, String repName, String scanName) {
         this.scanDest = scanDest;
         this.repName = repName;
-        this.jackedArg = jackedArg;
+        this.scanName = scanName;
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
 
-        // Install Jacked
-        String installScriptUrl = "https://raw.githubusercontent.com/carbonetes/jacked/main/install.sh";
-        URL url = new URL(installScriptUrl);
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-        StringBuilder script = new StringBuilder();
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            script.append(inputLine).append("\n");
-        }
-        in.close();
+        // Check if Jacked Binary installed on workspace
+        String[] cmd = { JACKED };
+        if (ExecuteBinary.ExecuteJacked(cmd, workspace, launcher, listener) == 0) {
 
-        // Create tmp Directory
-        FilePath jackedTmpDir = workspace.child("jackedTmpDir");
-        jackedTmpDir.mkdirs();
-
-        // Store Jacked on tmp Directory
-        FilePath scriptFile = jackedTmpDir.child("install.sh");
-        scriptFile.write(script.toString(), "UTF-8");
-
-        // Launch Install.sh
-        int ret = launcher.launch()
-                .cmds("sh", scriptFile.getRemote())
-                .envs(env)
-                .stdout(listener)
-                .stderr(listener.getLogger())
-                .pwd(workspace)
-                .join();
-
-        // Check if the installation was successful
-        if (ret == 0) {
-            System.out.println("Installation succeeded");
-        } else {
-            System.out.println("Installation failed - error code: " + ret);
-        }
-
-        // Run Jacked
-
-        String jackedCommand = "jacked";
-        ret = launcher.launch()
-                .cmds(jackedCommand)
-                .stdout(listener)
-                .stderr(listener.getLogger())
-                .pwd(workspace)
-                .join();
-
-        // Check if the command ran successfully
-        if (ret == 0) {
-            System.out.println("Jacked command ran successfully");
-        } else {
-            System.out.println("Failed to run Jacked command - error code: " + ret);
+            // Install Jacked
+            InstallBinary.InstallJacked(workspace, launcher, listener, env);
         }
 
         // Modify Jacked command with argument
 
-        if (jackedArg != null && jackedArg != "") {
-            ret = launcher.launch()
-                    .cmds(jackedCommand, jackedArg)
-                    .stdout(listener)
-                    .stderr(listener.getLogger())
-                    .pwd(workspace)
-                    .join();
-
-            // Check if the command ran successfully
-            if (ret == 0) {
-                System.out.println("Jacked with Args command ran successfully");
-            } else {
-                System.out.println("Failed to run Jacked command with Args - error code: " + ret);
-            }
+        if (scanName != null && scanName != "") {
+            cmd = new String[] { JACKED, scanName, "--fail-criteria", selectedFailCriteria };
+            ExecuteBinary.ExecuteJacked(cmd, workspace, launcher, listener);
         } else {
-            System.out.println("Please Input Arguments");
+            System.out.println("Please Input Scan File");
         }
     }
 
