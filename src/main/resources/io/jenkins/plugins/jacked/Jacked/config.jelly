@@ -2,16 +2,17 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
   <f:section title="Jacked Configuration">
-    <f:entry title="Scan Name" field="scanName">
+    <f:entry title="Scan" field="scanName" help="src\main\webapp\help\scan.html">
       <f:textbox name="scanName" />
     </f:entry>
 
-    <f:entry title="Select Severity Level">
-    <f:select class="setting-input" name="selectedSeverityLevel">
+    <f:entry title="Select Severity Level" help="src\main\webapp\help\severity.html">
+    <f:select class="setting-input" name="selectedSeverityLevel" >
       <j:forEach items="${instance.doFillItems()}" var="level">
         <f:option value="${level.value}">${level.name}</f:option>
       </j:forEach>
     </f:select>
+
 
     <f:entry field="autoInstall">
       <f:checkbox default="false"/>
