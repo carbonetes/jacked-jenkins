@@ -22,8 +22,8 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
-import io.jenkins.plugins.jacked.install.ExecuteBinary;
-import io.jenkins.plugins.jacked.install.InstallBinary;
+import io.jenkins.plugins.jacked.install.executeBinary;
+import io.jenkins.plugins.jacked.install.installBinary;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
@@ -98,10 +98,10 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
         // Check if Jacked Binary installed on workspace
         String[] cmd = { JACKED };
-        if (ExecuteBinary.ExecuteJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
+        if (executeBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
 
             // Install Jacked
-            InstallBinary.InstallJacked(workspace, launcher, listener, env);
+            installBinary.installJacked(workspace, launcher, listener, env);
         }
 
         // Modify Jacked command with argument
@@ -109,7 +109,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         if (scanName != null && scanName != "") {
             String timestampFile = " > jacked" + time() + ".log";
             String[] cmdArgs = { JACKED, scanName, "--fail-criteria", selectedSeverityLevel };
-            ExecuteBinary.ExecuteJacked(cmdArgs, workspace, launcher, listener);
+            executeBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
             System.out.println("Please Input Scan File");
         }
@@ -153,20 +153,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         }
 
         public ListBoxModel doFillItems() {
-            LOGGER.log(Level.INFO, "doFillItems() called");
-            ListBoxModel items = new ListBoxModel(
-                    new Option("-- Select --", ""),
-                    new Option("Critical", "critical"),
-                    new Option("High", "high"),
-                    new Option("Medium", "medium"),
-                    new Option("Low", "low"),
-                    new Option("Negligible", "negligible"),
-                    new Option("Unknown", "unknown"));
-            LOGGER.log(Level.INFO, "Returning ListBoxModel: {0}", items);
-            return items;
-        }
-
-        public ListBoxModel doFillnullItems() {
             LOGGER.log(Level.INFO, "doFillItems() called");
             ListBoxModel items = new ListBoxModel(
                     new Option("-- Select --", ""),
