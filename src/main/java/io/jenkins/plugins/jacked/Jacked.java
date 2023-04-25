@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.kohsuke.stapler.verb.POST;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -150,8 +152,9 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return REP_NAME_DEFAULT;
         }
 
-        public ListBoxModel doFillItems() {
-            LOGGER.log(Level.INFO, "doFillItems() called");
+        @POST
+        public ListBoxModel doFillSeverityTypeItems() {
+            LOGGER.log(Level.INFO, "doFillSeverityTypeItems() called");
             ListBoxModel items = new ListBoxModel(
                     new Option("-- Select --", ""),
                     new Option("Critical", "critical"),
