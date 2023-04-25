@@ -2,6 +2,7 @@ package io.jenkins.plugins.jacked;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.AccessDeniedException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -19,12 +20,14 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.security.Permission;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
 import io.jenkins.plugins.jacked.install.InstallBinary;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
@@ -159,7 +162,14 @@ public class Jacked extends Builder implements SimpleBuildStep {
         }
 
         @POST
-        public ListBoxModel doFillSeverityTypeItems() {
+        public ListBoxModel doFillSeverityTypeItems() throws AccessDeniedException {
+            // Check if the user has the necessary permission
+            Jenkins jenkins = Jenkins.get();
+            if (!jenkins.hasPermission(Permission.CONFIGURE)) {
+                throw new AccessDeniedException("Insufficient permissions");
+            }
+
+            // Execute the operation
             LOGGER.log(Level.INFO, "doFillSeverityTypeItems() called");
             ListBoxModel items = new ListBoxModel(
                     new Option("-- Select --", ""),
