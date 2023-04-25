@@ -42,7 +42,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanDest;
     private String repName;
     private String scanName;
-    private String selectedSeverityLevel;
+    private String severityType;
     private Boolean autoInstall;
 
     public String getScanDest() {
@@ -69,12 +69,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.scanName = scanName;
     }
 
-    public String getSelectSeverityLevel() {
-        return selectedSeverityLevel;
+    public String getSeverityType() {
+        return severityType;
     }
 
-    public void setSelectSeverityLevel(String selectedSeverityLevel) {
-        this.selectedSeverityLevel = selectedSeverityLevel;
+    public void setSeverityType(String severityType) {
+        this.severityType = severityType;
     }
 
     public Boolean getAutoInstall() {
@@ -88,11 +88,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String scanName, String selectedSeverityLevel, Boolean autoInstall) {
+    public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
-        this.selectedSeverityLevel = selectedSeverityLevel;
+        this.severityType = severityType;
         this.autoInstall = autoInstall;
     }
 
@@ -117,7 +117,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
         if (scanName != null && scanName != "") {
             String timestampFile = " > jacked" + time() + ".log";
-            String[] cmdArgs = { JACKED, scanName, "--fail-criteria", selectedSeverityLevel };
+            String[] cmdArgs = { JACKED, scanName, "--fail-criteria", severityType };
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
             System.out.println("Please Input Scan File");

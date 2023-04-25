@@ -7,9 +7,7 @@
     </f:entry>
 
     <f:entry title="Severity Type" field="severityType">
-      <f:select t-att-name="value" name="selectedSeverityLevel">
-        <f:options items="${instance.doFillSeverityTypeItems()}" />
-      </f:select>
+      <f:select />
     </f:entry>
 
     <f:entry field="autoInstall">
