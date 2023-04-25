@@ -3,6 +3,8 @@ package io.jenkins.plugins.jacked.install;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import hudson.EnvVars;
@@ -13,11 +15,11 @@ import hudson.model.TaskListener;
 public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher,
-            TaskListener listener, EnvVars env) throws InterruptedException, IOException {
-
+            TaskListener listener, EnvVars env) throws InterruptedException, IOException, URISyntaxException {
         // Install Jacked
         String installScriptUrl = "https://raw.githubusercontent.com/carbonetes/jacked/main/install.sh";
-        URL url = new URL(installScriptUrl);
+        URI installScriptUri = new URI(installScriptUrl);
+        URL url = installScriptUri.toURL();
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
         StringBuilder script = new StringBuilder();
         String inputLine;
