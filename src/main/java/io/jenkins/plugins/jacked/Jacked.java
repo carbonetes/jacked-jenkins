@@ -1,6 +1,7 @@
 package io.jenkins.plugins.jacked;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -101,7 +102,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
         if (ExecuteBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
 
             // Install Jacked
-            InstallBinary.installJacked(workspace, launcher, listener, env);
+            try {
+                InstallBinary.installJacked(workspace, launcher, listener, env);
+            } catch (URISyntaxException e) {
+                System.out.println("Error on Install Binary Jacked");
+                e.printStackTrace();
+            }
         }
 
         // Modify Jacked command with argument
