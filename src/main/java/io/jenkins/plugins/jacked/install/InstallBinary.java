@@ -10,7 +10,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
 
-public class installBinary {
+public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher,
             TaskListener listener, EnvVars env) throws InterruptedException, IOException {
