@@ -6,7 +6,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
 
-public class executeBinary {
+public class ExecuteBinary {
 
     public static int executeJacked(String[] cmd, FilePath workspace, Launcher launcher,
             TaskListener listener) throws InterruptedException, IOException {
