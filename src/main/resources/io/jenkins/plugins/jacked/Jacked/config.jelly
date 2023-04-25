@@ -2,11 +2,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
   <f:section title="Jacked Configuration">
-    <f:entry title="Scan" field="scanName" help="/plugin/jacked/scan.html">
+    <f:entry title="Scan" field="scanName">
       <f:textbox name="scanName" />
     </f:entry>
 
-    <f:entry title="Severity Type" field="severityType" help="/plugin/jacked/severity.html">
+    <f:entry title="Severity Type" field="severityType">
       <f:select t-att-name="value" name="selectedSeverityLevel">
         <f:options items="${instance.doFillSeverityTypeItems()}" />
       </f:select>
