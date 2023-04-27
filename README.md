@@ -31,8 +31,8 @@ pipeline
     stages {  
         stage('Build') {  
             steps {  
-                step([$class: 'jacked', scanName: 'alpine', selectedSeverityLevel: 'medium', autoInstall: true]) 
-            }  
+                step([$class: 'jacked', scanName: 'alpine', severityType: 'medium', autoInstall: true])
+            }
         }  
     }  
 } 
