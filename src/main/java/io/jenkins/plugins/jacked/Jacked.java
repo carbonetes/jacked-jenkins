@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.interceptor.RequirePOST;
 import org.kohsuke.stapler.verb.POST;
 
 import hudson.EnvVars;
@@ -101,8 +100,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             throws InterruptedException, IOException {
 
         // Check if Jacked Binary installed on workspace
-        String[] cmd = { JACKED };
-        if (ExecuteBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
+        if (Boolean.TRUE.equals(autoInstall)) {
 
             // Install Jacked
             try {
@@ -116,7 +114,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         // Modify Jacked command with argument
 
         if (scanName != null && scanName != "") {
-            String timestampFile = " > jacked" + time() + ".log";
             String[] cmdArgs = { JACKED, scanName, "--fail-criteria", severityType };
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
