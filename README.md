@@ -28,7 +28,7 @@ pipeline {
     stages {
         stage('Vulnerability Scan') {
             steps {
-                  jacked scanDest: scanName: 'alpine', severityType: 'high', autoInstall: true
+                  jacked scanDest: scanName: 'alpine', severityType: 'high', autoInstall: true 
             }
         }
     }
