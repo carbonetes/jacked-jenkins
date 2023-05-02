@@ -22,20 +22,18 @@ See section [Installation/Recommended](https://github.com/carbonetes/jacked) for
 
 ### Usage as Pipeline
 ```sh
-pipeline  
-{  
-    agent any  
-    options {  
-        skipStagesAfterUnstable()  
-    }  
-    stages {  
-        stage('Build') {  
-            steps {  
-                step([$class: 'jacked', scanName: 'alpine', severityType: 'medium', autoInstall: true])
+pipeline {
+    agent any
+    
+    stages {
+        stage('Vulnerability Scan') {
+            steps {
+                jacked(scanDest: scanName: "alpine", severityType: "high", autoInstall: true)
             }
-        }  
-    }  
-} 
+        }
+    }
+}
+
 ```
 
 ## LICENSE
