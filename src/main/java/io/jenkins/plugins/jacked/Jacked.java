@@ -100,7 +100,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
             throws InterruptedException, IOException {
 
         // Check if Jacked Binary installed on workspace
-        if (Boolean.TRUE.equals(autoInstall)) {
+        String[] cmd = { JACKED };
+        if (ExecuteBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
 
             // Install Jacked
             try {
