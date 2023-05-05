@@ -1,4 +1,4 @@
-# jenkins-jacked
+# jacked-plugin
 
 ## Introduction
 
