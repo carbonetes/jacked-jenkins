@@ -28,12 +28,13 @@ pipeline {
     stages {
         stage('Vulnerability Scan') {
             steps {
-                  jacked scanDest: scanName: 'alpine', severityType: 'high', autoInstall: true  
+                script {
+                    jacked scanType: 'image', imageName: 'alpine', severityType: 'high', autoInstall: true  
+                }
             }
         }
     }
 }
-
 ```
 
 ## LICENSE
