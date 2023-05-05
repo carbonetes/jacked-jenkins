@@ -26,6 +26,7 @@ import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
 import io.jenkins.plugins.jacked.install.InstallBinary;
+import io.jenkins.plugins.jacked.scanType.ScanType;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -43,6 +44,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanName;
     private String severityType;
     private Boolean autoInstall;
+    private String scanType;
 
     public String getScanDest() {
         return scanDest;
@@ -84,15 +86,25 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.autoInstall = autoInstall;
     }
 
+    public String getScanType() {
+        return scanType;
+    }
+
+    public void setScanType(String scanType) {
+        this.scanType = scanType;
+    }
+
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall) {
+    public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
+            String scanType) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
         this.autoInstall = autoInstall;
+        this.scanType = scanType;
     }
 
     @Override
@@ -115,10 +127,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
         // Modify Jacked command with argument
 
         if (scanName != null && scanName != "") {
-            String[] cmdArgs = { JACKED, scanName, "--fail-criteria", severityType };
+
+            // Determine the Arguments
+            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName);
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
-            System.out.println("Please Input Scan File");
+            System.out.println("Please input your scan name");
         }
     }
 
@@ -177,6 +191,26 @@ public class Jacked extends Builder implements SimpleBuildStep {
                     new Option("Low", "low"),
                     new Option("Negligible", "negligible"),
                     new Option("Unknown", "unknown"));
+            LOGGER.log(Level.INFO, "Returning ListBoxModel: {0}", items);
+            return items;
+        }
+
+        @POST
+        public ListBoxModel doFillScanTypeItems() throws AccessDeniedException {
+            // Check if the user has the necessary permission
+            Jenkins jenkins = Jenkins.get();
+            if (!jenkins.hasPermission(Permission.CONFIGURE)) {
+                throw new AccessDeniedException("Insufficient permissions");
+            }
+
+            // Execute the operation
+            LOGGER.log(Level.INFO, "doFillScanTypeItems() called");
+            ListBoxModel items = new ListBoxModel(
+                    new Option("-- Select --", ""),
+                    new Option("Image", "image"),
+                    new Option("Directory", "directory"),
+                    new Option("Tar File", "tar"),
+                    new Option("SBOM File", "sbom"));
             LOGGER.log(Level.INFO, "Returning ListBoxModel: {0}", items);
             return items;
         }
