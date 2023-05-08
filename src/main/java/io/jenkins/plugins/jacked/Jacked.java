@@ -38,6 +38,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private static final String REP_NAME_DEFAULT = "jackedReport_${JOB_NAME}_${BUILD_NUMBER}.txt";
 
     private static final String JACKED = "jacked";
+    private static final String VERSION = "--version";
 
     private String scanDest;
     private String repName;
@@ -45,6 +46,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String severityType;
     private Boolean autoInstall;
     private String scanType;
+    private Boolean ciMode;
 
     public String getScanDest() {
         return scanDest;
@@ -94,17 +96,26 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.scanType = scanType;
     }
 
+    public String getCiMode() {
+        return scanType;
+    }
+
+    public void setCiMode(Boolean ciMode) {
+        this.ciMode = ciMode;
+    }
+
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
     public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
-            String scanType) {
+            String scanType, Boolean ciMode) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
         this.autoInstall = autoInstall;
         this.scanType = scanType;
+        this.ciMode = ciMode;
     }
 
     @Override
@@ -112,7 +123,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             throws InterruptedException, IOException {
 
         // Check if Jacked Binary installed on workspace
-        String[] cmd = { JACKED };
+        String[] cmd = { JACKED, VERSION };
         if (ExecuteBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
 
             // Install Jacked
@@ -129,7 +140,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         if (scanName != null && !scanName.equals("")) {
 
             // Determine the Arguments
-            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName);
+            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName, ciMode);
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
             System.out.println("Please input your scan name");
