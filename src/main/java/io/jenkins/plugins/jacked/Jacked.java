@@ -126,7 +126,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
         // Modify Jacked command with argument
 
-        if (scanName != null && scanName != "") {
+        if (scanName != null && !scanName.equals("")) {
 
             // Determine the Arguments
             String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName);
