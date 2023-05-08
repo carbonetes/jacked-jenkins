@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -20,7 +21,7 @@ public class InstallBinary {
         String installScriptUrl = "https://raw.githubusercontent.com/carbonetes/jacked/main/install.sh";
         URI installScriptUri = new URI(installScriptUrl);
         URL url = installScriptUri.toURL();
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
         StringBuilder script = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) {
