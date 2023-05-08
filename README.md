@@ -29,7 +29,7 @@ pipeline {
         stage('Vulnerability Scan') {
             steps {
                 script {
-                    jacked scanType: 'image', imageName: 'alpine', severityType: 'high', ciMode: true, autoInstall: true  
+                    jacked scanType: 'image', imageName: 'alpine', severityType: 'high', ciMode: true, autoInstall: true   
                 }
             }
         }
