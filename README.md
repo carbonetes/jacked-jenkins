@@ -38,7 +38,7 @@ See section [Installation/Recommended](https://github.com/carbonetes/jacked) for
 - `Image`: Provide the image to be scanned.
 - `Directory`: Provide the target directory path to be scanned.
 - `Tar File`: Provide the target tar file path to be scanned.
-- `SBOM File`: Provide the target Diggity JSON Format SBOM file path to be scanned.
+- `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
 ### Enable CI Mode
 Entering CI Mode provides the following:
 - `Quiet Mode`: Removed verbiage.
