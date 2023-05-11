@@ -24,8 +24,12 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
+import io.jenkins.plugins.jacked.install.AutoInstall;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
-import io.jenkins.plugins.jacked.install.InstallBinary;
+import io.jenkins.plugins.jacked.install.Scoop;
+import io.jenkins.plugins.jacked.os.CheckOS;
+import io.jenkins.plugins.jacked.os.Unix;
+import io.jenkins.plugins.jacked.os.Windows;
 import io.jenkins.plugins.jacked.scanType.ScanType;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
@@ -36,9 +40,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
     private static final String SCAN_TARGET_DEFAULT = "dir:/";
     private static final String REP_NAME_DEFAULT = "jackedReport_${JOB_NAME}_${BUILD_NUMBER}.txt";
-
-    private static final String JACKED = "jacked";
-    private static final String VERSION = "--version";
 
     private String scanDest;
     private String repName;
@@ -122,28 +123,37 @@ public class Jacked extends Builder implements SimpleBuildStep {
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
 
-        // Check if Jacked Binary installed on workspace
-        String[] cmd = { JACKED, VERSION };
-        if (ExecuteBinary.executeJacked(cmd, workspace, launcher, listener) == 1 || Boolean.TRUE.equals(autoInstall)) {
+        String osName = CheckOS.osName(listener);
 
-            // Install Jacked
-            try {
-                InstallBinary.installJacked(workspace, launcher, listener, env);
-            } catch (URISyntaxException e) {
-                System.out.println("Error on Install Binary Jacked");
-                e.printStackTrace();
+        // Check OS and program or command jacked is available
+        if (Boolean.TRUE.equals(autoInstall)) {
+            if (CheckOS.isWindows(osName)) {
+                // Windows specific action
+                Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType,
+                        ciMode);
+            } else {
+                install(autoInstall, workspace, env, launcher, listener, osName);
             }
+        } else {
+            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
+                    ciMode);
         }
 
-        // Modify Jacked command with argument
+    }
 
+    public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
+            String scanName, String scanType, String severityType, Boolean ciMode)
+            throws InterruptedException, IOException {
+
+        // Modify Jacked command with argument
         if (scanName != null && !scanName.equals("")) {
 
             // Determine the Arguments
-            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName, ciMode);
+            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName,
+                    ciMode);
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
         } else {
-            System.out.println("Please input your scan name");
+            listener.getLogger().println("Please input your scan name");
         }
     }
 
@@ -232,4 +242,15 @@ public class Jacked extends Builder implements SimpleBuildStep {
         }
 
     }
+
+    public static void install(Boolean autoInstall, FilePath workspace, EnvVars env, Launcher launcher,
+            TaskListener listener, String osName)
+            throws InterruptedException, IOException {
+        try {
+            AutoInstall.Start(autoInstall, workspace, env, launcher, listener, osName);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
