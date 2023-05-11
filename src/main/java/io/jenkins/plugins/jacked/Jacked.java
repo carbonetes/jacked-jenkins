@@ -247,7 +247,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             TaskListener listener, String osName)
             throws InterruptedException, IOException {
         try {
-            AutoInstall.Start(autoInstall, workspace, env, launcher, listener, osName);
+            AutoInstall.start(autoInstall, workspace, env, launcher, listener, osName);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

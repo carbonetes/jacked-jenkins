@@ -9,7 +9,7 @@ import hudson.Launcher;
 import hudson.model.TaskListener;
 
 public class AutoInstall {
-    public static void Start(Boolean autoInstall, FilePath workspace, EnvVars env, Launcher launcher,
+    public static void start(Boolean autoInstall, FilePath workspace, EnvVars env, Launcher launcher,
             TaskListener listener, String osName) throws IOException, InterruptedException, URISyntaxException {
 
         if (Boolean.TRUE.equals(autoInstall)) {
