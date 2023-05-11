@@ -59,7 +59,7 @@ public class ScanType {
                 cmdArgs.add(severityType);
                 break;
         }
-        if (ciMode) {
+        if (Boolean.TRUE.equals(ciMode)) {
             cmdArgs.add(CIMODE);
         }
 

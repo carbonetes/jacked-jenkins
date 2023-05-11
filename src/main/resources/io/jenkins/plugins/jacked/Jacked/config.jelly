@@ -15,12 +15,12 @@
     </f:entry>
 
     <f:entry field="ciMode">
-      <f:checkbox default="true"/>
+      <f:checkbox />
       <label>${%Enable CI Mode}</label>
     </f:entry> 
 
     <f:entry field="autoInstall">
-      <f:checkbox default="false"/>
+      <f:checkbox />
       <label>${%Download and install jacked automatically}</label>
     </f:entry> 
   </f:section>
