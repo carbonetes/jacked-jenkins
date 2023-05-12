@@ -2,8 +2,11 @@ package io.jenkins.plugins.jacked.scanType;
 
 import java.util.ArrayList;
 
+import io.jenkins.plugins.jacked.os.CheckOS;
+import hudson.model.TaskListener;
+
 public class ScanType {
-    private static final String JACKED = "jacked";
+    private static String JACKED = "jacked";
     private static final String FAILCRITERIA = "--fail-criteria";
     private static final String DIR = "--dir";
     private static final String TAR = "--tar";
@@ -11,6 +14,11 @@ public class ScanType {
     private static final String CIMODE = "--ci";
 
     public static String[] scanTypeArgs(String scanType, String severityType, String scanName, Boolean ciMode) {
+        String osName = CheckOS.osName();
+
+        if (!CheckOS.isWindows(osName)) {
+            JACKED = "./jackedTmpDir/bin/jacked";
+        }
 
         ArrayList<String> cmdArgs = new ArrayList<String>();
 
