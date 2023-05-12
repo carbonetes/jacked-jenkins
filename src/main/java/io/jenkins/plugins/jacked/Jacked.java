@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
@@ -172,6 +173,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
     }
 
+    @Symbol("jacked")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
