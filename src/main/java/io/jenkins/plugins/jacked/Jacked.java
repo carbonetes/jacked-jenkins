@@ -24,12 +24,10 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
-import io.jenkins.plugins.jacked.install.AutoInstall;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
+import io.jenkins.plugins.jacked.install.InstallBinary;
 import io.jenkins.plugins.jacked.install.Scoop;
 import io.jenkins.plugins.jacked.os.CheckOS;
-import io.jenkins.plugins.jacked.os.Unix;
-import io.jenkins.plugins.jacked.os.Windows;
 import io.jenkins.plugins.jacked.scanType.ScanType;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
@@ -123,7 +121,9 @@ public class Jacked extends Builder implements SimpleBuildStep {
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
 
-        String osName = CheckOS.osName(listener);
+        String osName = CheckOS.osName();
+        // Jacked Running on this OS.
+        listener.getLogger().println("Jacked Plugin - Running on: " + osName);
 
         // Check OS and program or command jacked is available
         if (Boolean.TRUE.equals(autoInstall)) {
@@ -132,7 +132,13 @@ public class Jacked extends Builder implements SimpleBuildStep {
                 Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType,
                         ciMode);
             } else {
-                install(autoInstall, workspace, env, launcher, listener, osName);
+                try {
+                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType, severityType,
+                            ciMode);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+
+                }
             }
         } else {
             compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
@@ -241,16 +247,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return true;
         }
 
-    }
-
-    public static void install(Boolean autoInstall, FilePath workspace, EnvVars env, Launcher launcher,
-            TaskListener listener, String osName)
-            throws InterruptedException, IOException {
-        try {
-            AutoInstall.start(autoInstall, workspace, env, launcher, listener, osName);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
 }

@@ -8,11 +8,12 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
+import io.jenkins.plugins.jacked.Jacked;
 
 public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher, TaskListener listener, EnvVars env,
-            String osName)
+            String scanName, String scanType, String severityType, Boolean ciMode)
             throws InterruptedException, IOException, URISyntaxException {
         // Create a temporary directory inside the workspace to store the downloaded
         // files
@@ -28,23 +29,49 @@ public class InstallBinary {
         FilePath destDir = jackedTmpDir.child("jacked");
 
         // Launch the install script with custom options using sh
-        String[] shCmd = { "bash", "install.sh", "-d", destDir.getRemote() };
+        String[] shCmd = { "bash", "install.sh", "|", "sh", "-s", "--", "-d", destDir.getRemote() };
         Launcher.ProcStarter procStarter = launcher.launch()
                 .cmds(shCmd)
                 .envs(env).pwd(jackedTmpDir).stdin(null).stdout(listener).stderr(listener.getLogger());
         int ret = procStarter.start().join();
 
         // Check if the installation was successful and print a message to the listener
-        // log
         if (ret == 0) {
-            listener.getLogger().println("Installation succeeded");
-            if (osName.toLowerCase().contains("windows")) {
-                // Add Jacked to the PATH environment variable
-                String executableFolder = destDir.child("bin").getRemote();
-                env.override("PATH", executableFolder + ";${PATH}");
-            }
+            listener.getLogger().println("Jacked Installed Successfully");
+            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, ciMode);
+
         } else {
             listener.getLogger().println("Installation failed - error code: " + ret);
+        }
+    }
+
+    public static void setPath(FilePath workspace, Launcher launcher, TaskListener listener,
+            EnvVars env, String scanName, String scanType, String severityType, Boolean ciMode)
+            throws IOException, InterruptedException {
+
+        FilePath jackedExecutable = workspace.child("jackedTmpDir");
+        String jackedExecutablePath = jackedExecutable.getRemote();
+        listener.getLogger().println(jackedExecutablePath);
+        // String usrLocalBin = "/usr/local/bin/";
+        String binPath = "/bin";
+
+        String[] cmd = new String[] { "sh", "-c",
+                "export PATH=\"" + jackedExecutablePath + binPath + ":$PATH && jacked\"" };
+        Launcher.ProcStarter proc = launcher.launch()
+                .cmds(cmd)
+                .envs(env)
+                .pwd(workspace.getRemote())
+                .stdin(null)
+                .stdout(listener)
+                .stderr(listener.getLogger());
+        int procCode = proc.join();
+        if (procCode != 0) {
+            listener.getLogger().println("Failed to set PATH environment variable - error code: " + procCode);
+        } else {
+            listener.getLogger().println("PATH environment variable has been updated successfully.");
+
+            // Compile Arguments for scanning.
+            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, ciMode);
         }
     }
 
