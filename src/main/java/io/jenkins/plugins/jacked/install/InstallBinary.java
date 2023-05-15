@@ -13,7 +13,7 @@ import io.jenkins.plugins.jacked.Jacked;
 public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher, TaskListener listener, EnvVars env,
-            String scanName, String scanType, String severityType, Boolean ciMode)
+            String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
             throws InterruptedException, IOException, URISyntaxException {
         // Create a temporary directory inside the workspace to store the downloaded
         // files
@@ -38,7 +38,7 @@ public class InstallBinary {
         // Check if the installation was successful and print a message to the listener
         if (ret == 0) {
             listener.getLogger().println("Jacked Installed Successfully");
-            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, ciMode);
+            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, ciMode, skipFail);
 
         } else {
             listener.getLogger().println("Installation failed - error code: " + ret);
@@ -46,7 +46,7 @@ public class InstallBinary {
     }
 
     public static void setPath(FilePath workspace, Launcher launcher, TaskListener listener,
-            EnvVars env, String scanName, String scanType, String severityType, Boolean ciMode)
+            EnvVars env, String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
             throws IOException, InterruptedException {
 
         FilePath jackedExecutable = workspace.child("jackedTmpDir");
@@ -71,7 +71,8 @@ public class InstallBinary {
             listener.getLogger().println("PATH environment variable has been updated successfully.");
 
             // Compile Arguments for scanning.
-            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, ciMode);
+            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, ciMode,
+                    skipFail);
         }
     }
 

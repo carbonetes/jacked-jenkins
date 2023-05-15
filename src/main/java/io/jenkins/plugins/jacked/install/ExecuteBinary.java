@@ -12,7 +12,7 @@ import io.jenkins.cli.shaded.org.apache.commons.io.output.ByteArrayOutputStream;
 public class ExecuteBinary {
 
     public static int executeJacked(String[] cmd, FilePath workspace, Launcher launcher,
-            TaskListener listener) throws InterruptedException, IOException {
+            TaskListener listener, Boolean skipFail) throws InterruptedException, IOException {
 
         ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
         ByteArrayOutputStream stderrStream = new ByteArrayOutputStream();
@@ -29,11 +29,12 @@ public class ExecuteBinary {
         listener.getLogger().println(stdout);
         listener.getLogger().println(stderr);
 
-        if (stdout.contains("failed") || stderr.contains("failed")) {
-            listener.error("Jacked assessment is 'failed'. See recommendations to fix vulnerabilities.");
-            throw new AbortException("Build failed");
+        if (Boolean.FALSE.equals(skipFail)) {
+            if (stdout.contains("failed") || stderr.contains("failed")) {
+                listener.error("Jacked assessment is 'failed'. See recommendations to fix vulnerabilities.");
+                throw new AbortException("Build failed");
+            }
         }
-
         return ret;
     }
 

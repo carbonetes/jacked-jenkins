@@ -47,6 +47,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private Boolean autoInstall;
     private String scanType;
     private Boolean ciMode;
+    private Boolean skipFail;
 
     public String getScanDest() {
         return scanDest;
@@ -104,11 +105,19 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.ciMode = ciMode;
     }
 
+    public String getSkipFail() {
+        return scanType;
+    }
+
+    public void setSkipFail(Boolean skipFail) {
+        this.skipFail = skipFail;
+    }
+
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
     public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
-            String scanType, Boolean ciMode) {
+            String scanType, Boolean ciMode, Boolean skipFail) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
@@ -116,6 +125,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.autoInstall = autoInstall;
         this.scanType = scanType;
         this.ciMode = ciMode;
+        this.skipFail = skipFail;
     }
 
     @Override
@@ -131,11 +141,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
             if (CheckOS.isWindows(osName)) {
                 // Windows specific action
                 Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType,
-                        ciMode);
+                        ciMode, skipFail);
             } else {
                 try {
                     InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType, severityType,
-                            ciMode);
+                            ciMode, skipFail);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
 
@@ -143,13 +153,13 @@ public class Jacked extends Builder implements SimpleBuildStep {
             }
         } else {
             compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
-                    ciMode);
+                    ciMode, skipFail);
         }
 
     }
 
     public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-            String scanName, String scanType, String severityType, Boolean ciMode)
+            String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
             throws InterruptedException, IOException {
 
         // Modify Jacked command with argument
@@ -158,7 +168,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             // Determine the Arguments
             String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName,
                     ciMode);
-            ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener);
+            ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener, skipFail);
         } else {
             listener.getLogger().println("Please input your scan name");
         }
