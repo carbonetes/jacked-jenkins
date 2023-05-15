@@ -6,7 +6,7 @@
       <f:textbox name="scanName" />
     </f:entry>
 
-    <f:entry title="Severity Type" field="severityType">
+    <f:entry title="Failed Criteria Severity" field="severityType">
       <f:select />
     </f:entry>
 
@@ -17,6 +17,11 @@
     <f:entry field="ciMode">
       <f:checkbox />
       <label>${%Enable CI Mode}</label>
+    </f:entry> 
+    
+    <f:entry field="skipFail">
+      <f:checkbox />
+      <label>${%Skip Build Failed}</label>
     </f:entry> 
 
     <f:entry field="autoInstall">

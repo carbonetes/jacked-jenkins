@@ -45,6 +45,8 @@ Entering CI Mode provides the following:
 - Show a list of packages.
 - `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
 - Show CI Assessment Result: Pass or Fail based on the selected fail criteria severity type.
+### Skip Fail
+<b>Warning:</b> If the value is checked, it will restrict the plugin from failing the build based on the assessment result.
 ### Download and install jacked automatically.
 It is recommended to check on the first run. If checked, the plugin will install the "jacked" binary tool.
 - `Prerequisite`: "Jacked binary" needs to be available in the path in order to be executed.
@@ -59,7 +61,7 @@ pipeline {
         stage('Vulnerability Scan') {
             steps {
                 script {
-                    jacked scanType: 'image', scanName: 'alpine', severityType: 'high', ciMode: true, autoInstall: true   
+                    jacked scanType: 'image', scanName: 'alpine', severityType: 'high', ciMode: true, autoInstall: true, skipFail: false  
                 }
             }
         }
