@@ -28,7 +28,7 @@ Provides the following:
 ## Plugin Configuration Fields and Descriptions
 ### Scan
 <b>Input: </b> Image name, Directory path, tar file path, or sbom file path.
-### Severity Type
+### Fail Criteria Severity
 <b>Description: </b>Select a threshold that will fail the build when equal to or above the severity found in the results. 
 <br>
 <b>Option:</b> 
