@@ -18,6 +18,13 @@ See section [Installation/Recommended](https://github.com/carbonetes/jacked) for
 
 <img src="assets/configuration.png" alt="Jacked plugin configuration" />
 
+## Output
+Provides the following:
+- `Quiet Mode`: Removed verbiage.
+- Show a list of packages.
+- `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
+- Show CI Assessment Result: Pass or Fail based on the selected fail criteria severity type.
+
 ## Plugin Configuration Fields and Descriptions
 ### Scan
 <b>Input: </b> Image name, Directory path, tar file path, or sbom file path.
@@ -39,12 +46,6 @@ See section [Installation/Recommended](https://github.com/carbonetes/jacked) for
 - `Directory`: Provide the target directory path to be scanned.
 - `Tar File`: Provide the target tar file path to be scanned.
 - `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
-### Enable CI Mode
-Entering CI Mode provides the following:
-- `Quiet Mode`: Removed verbiage.
-- Show a list of packages.
-- `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
-- Show CI Assessment Result: Pass or Fail based on the selected fail criteria severity type.
 ### Skip Fail
 <b>Warning:</b> If the value is checked, it will restrict the plugin from failing the build based on the assessment result.
 ### Download and install jacked automatically.
@@ -61,7 +62,7 @@ pipeline {
         stage('Vulnerability Scan') {
             steps {
                 script {
-                    jacked scanType: 'image', scanName: 'alpine', severityType: 'high', ciMode: true, autoInstall: true, skipFail: false  
+                    jacked scanType: 'image', scanName: 'alpine', severityType: 'high', autoInstall: true, skipFail: false  
                 }
             }
         }
