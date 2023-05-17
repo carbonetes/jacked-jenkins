@@ -11,7 +11,7 @@ This jenkins plugin scans a given target and expose vulnerability.
 This jenkins plugin installs jacked binary tool in the job workspace directory and performs scan. 
 ## Auto-install & Update Binary [Jacked](https://github.com/carbonetes/jacked)
 The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)`
-- `Auto-update`: If checked, the binary will automatically update when a new release is available.
+- Auto-update: If checked, the binary will automatically update when a new release is available.
 - Uses Scoop for Windows
 - Uses Shell Script for Linux
 
