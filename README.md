@@ -61,7 +61,7 @@ Default value is `false / unchecked`.
 <br>
 <b>Warning:</b> If the value is checked, it will skip check database update while scanning.
 
-### Usage as Pipeline
+## Usage as Pipeline
 ```sh
 pipeline {
     agent any
