@@ -30,7 +30,8 @@ public class ExecuteBinary {
         listener.getLogger().println(stderr);
 
         if (Boolean.FALSE.equals(skipFail)) {
-            if (stdout.contains("failed") || stderr.contains("failed")) {
+            if (stdout.contains("failed") || stderr.contains("failed") || stdout.contains("Error")
+                    || stderr.contains("Error")) {
                 listener.error("Jacked assessment is 'failed'. See recommendations to fix vulnerabilities.");
                 throw new AbortException("Build failed");
             }
