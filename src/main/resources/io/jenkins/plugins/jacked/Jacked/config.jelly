@@ -13,11 +13,6 @@
     <f:entry title="Scan Type" field="scanType">
       <f:select />
     </f:entry>
-
-    <f:entry field="ciMode">
-      <f:checkbox />
-      <label>${%Enable CI Mode}</label>
-    </f:entry> 
     
     <f:entry field="skipFail">
       <f:checkbox />
@@ -25,7 +20,7 @@
     </f:entry> 
 
     <f:entry field="autoInstall">
-      <f:checkbox />
+      <f:checkbox default="true"/>
       <label>${%Download and install jacked automatically}</label>
     </f:entry> 
   </f:section>

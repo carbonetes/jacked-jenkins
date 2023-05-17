@@ -3,7 +3,6 @@ package io.jenkins.plugins.jacked.scanType;
 import java.util.ArrayList;
 
 import io.jenkins.plugins.jacked.os.CheckOS;
-import hudson.model.TaskListener;
 
 public class ScanType {
     private static String JACKED = "jacked";

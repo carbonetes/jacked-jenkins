@@ -46,7 +46,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String severityType;
     private Boolean autoInstall;
     private String scanType;
-    private Boolean ciMode;
     private Boolean skipFail;
 
     public String getScanDest() {
@@ -97,16 +96,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.scanType = scanType;
     }
 
-    public String getCiMode() {
-        return scanType;
-    }
-
-    public void setCiMode(Boolean ciMode) {
-        this.ciMode = ciMode;
-    }
-
-    public String getSkipFail() {
-        return scanType;
+    public Boolean getSkipFail() {
+        return skipFail;
     }
 
     public void setSkipFail(Boolean skipFail) {
@@ -117,20 +108,22 @@ public class Jacked extends Builder implements SimpleBuildStep {
     // "DataBoundConstructor"
     @DataBoundConstructor
     public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
-            String scanType, Boolean ciMode, Boolean skipFail) {
+            String scanType, Boolean skipFail) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
         this.autoInstall = autoInstall;
         this.scanType = scanType;
-        this.ciMode = ciMode;
         this.skipFail = skipFail;
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
+
+        // Set CI Mode
+        Boolean ciMode = true;
 
         String osName = CheckOS.osName();
         // Jacked Running on this OS.
