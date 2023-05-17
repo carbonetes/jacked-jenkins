@@ -13,11 +13,6 @@
     <f:entry title="Scan Type" field="scanType">
       <f:select />
     </f:entry>
-
-    <f:entry field="autoInstall">
-      <f:checkbox default="true"/>
-      <label>${%Download and install jacked automatically}</label>
-    </f:entry>
     
     <f:entry field="skipFail">
       <f:checkbox default="false"/>

@@ -55,7 +55,6 @@ public class InstallBinary {
         FilePath jackedExecutable = workspace.child("jackedTmpDir");
         String jackedExecutablePath = jackedExecutable.getRemote();
         listener.getLogger().println(jackedExecutablePath);
-        // String usrLocalBin = "/usr/local/bin/";
         String binPath = "/bin";
 
         String[] cmd = new String[] { "sh", "-c",

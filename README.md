@@ -2,14 +2,18 @@
 
 ## Introduction
 
-[Jacked](https://github.com/carbonetes/jacked) Jacked provides organizations with a more comprehensive look at their application to take calculated actions and create a better security approach. Its primary purpose is to scan vulnerabilities to implement subsequent risk mitigation measures.
+[Jacked](https://github.com/carbonetes/jacked) provides organizations with a more comprehensive look at their application to take calculated actions and create a better security approach. Its primary purpose is to scan vulnerabilities to implement subsequent risk mitigation measures.
 
 This jenkins plugin scans a given target and expose vulnerability.
 
 ## Getting started
 
-This jenkins plugin installs jacked in the job workspace directory and performs scan. 
-See section [Installation/Recommended](https://github.com/carbonetes/jacked) for more installation details.
+This jenkins plugin installs jacked binary tool in the job workspace directory and performs scan. 
+## Auto-install & Update Binary [Jacked](https://github.com/carbonetes/jacked)
+The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)`
+- `Auto-update`: If checked, the binary will automatically update when a new release is available.
+- Uses Scoop for Windows
+- Uses Shell Script for Linux
 
 ## Usage as add build step
 <img src="assets/add-build-step.png" alt="Jacked plugin" />
@@ -46,12 +50,6 @@ Provides the following:
 - `Directory`: Provide the target directory path to be scanned.
 - `Tar File`: Provide the target tar file path to be scanned.
 - `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
-### Download and install jacked automatically.
-Default value is `true / checked`.
-<br>
-It is recommended to check on the first run. If checked, the plugin will install the "jacked" binary tool.
-- `Prerequisite`: "Jacked binary" needs to be available in the path in order to be executed.
-- `Auto-update`: If checked, the binary will automatically update when a new release is available, otherwise it will be reinstalled.
 
 ### Skip Build Fail
 Default value is `false / unchecked`.
@@ -75,7 +73,6 @@ pipeline {
                     scanName: 'ubuntu',                 // Input: Image name, Directory path, tar file path, or sbom file path.
                     severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                         // Severity: critical, high, medium, low, negligible, unknown.
-                    autoInstall: true,                  // Recommended set as true on the first run to install jacked binary.
                     skipFail: false,                    // Default as false. Skip build to fail based on the assessment.
                     skipDbUpdate: false                 // Default as false. Skip Database Update when scanning.
                 }

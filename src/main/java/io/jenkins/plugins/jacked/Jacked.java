@@ -27,6 +27,7 @@ import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
 import io.jenkins.plugins.jacked.install.InstallBinary;
+import io.jenkins.plugins.jacked.install.JackedExist;
 import io.jenkins.plugins.jacked.install.Scoop;
 import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.scan.SetArgs;
@@ -44,7 +45,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String repName;
     private String scanName;
     private String severityType;
-    private Boolean autoInstall;
     private String scanType;
     private Boolean skipFail;
     private Boolean skipDbUpdate;
@@ -81,14 +81,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.severityType = severityType;
     }
 
-    public Boolean getAutoInstall() {
-        return autoInstall;
-    }
-
-    public void setAutoInstall(Boolean autoInstall) {
-        this.autoInstall = autoInstall;
-    }
-
     public String getScanType() {
         return scanType;
     }
@@ -116,13 +108,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
+    public Jacked(String scanDest, String repName, String scanName, String severityType,
             String scanType, Boolean skipFail, Boolean skipDbUpdate) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
-        this.autoInstall = autoInstall;
         this.scanType = scanType;
         this.skipFail = skipFail;
         this.skipDbUpdate = skipDbUpdate;
@@ -136,15 +127,17 @@ public class Jacked extends Builder implements SimpleBuildStep {
         // Jacked Running on this OS.
         listener.getLogger().println("Jacked Plugin - Running on: " + osName);
 
-        // Check OS and program or command jacked is available
-        if (Boolean.TRUE.equals(autoInstall)) {
+        // Check OS
+        // Auto install, check jacked exists on workspace, if true skip install
+        if (Boolean.FALSE.equals(JackedExist.checkIfExists(workspace))) {
             if (CheckOS.isWindows(osName)) {
                 // Windows specific action
                 Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
                         skipDbUpdate);
             } else {
                 try {
-                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType, severityType,
+                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType,
+                            severityType,
                             skipFail, skipDbUpdate);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
@@ -152,9 +145,9 @@ public class Jacked extends Builder implements SimpleBuildStep {
                 }
             }
         } else {
-            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail, skipDbUpdate);
+            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                    skipDbUpdate);
         }
-
     }
 
     public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
