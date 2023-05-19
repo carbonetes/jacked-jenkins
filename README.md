@@ -1,4 +1,4 @@
-# jacked-plugin
+# Jacked
 
 ## Introduction
 
@@ -15,24 +15,34 @@ The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)
 - Uses Scoop for Windows
 - Uses Shell Script for Linux
 
-## Usage as add build step
+# Usage as add build step
 <img src="assets/add-build-step.png" alt="Jacked plugin" />
 
 ## Plugin Configuration
 
 <img src="assets/configuration.png" alt="Jacked plugin configuration" />
 
-## Output
+# Output
 Provides the following:
 - `Quiet Mode`: Removed verbiage.
 - Show a list of packages.
 - `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
 - Show CI Assessment Result: Pass or Fail based on the selected fail criteria severity type.
+- Saves output file on the workspace in every build. `jacked_result_$(JOBNAME)_$(BUILDNUMBER).txt`
 
-## Plugin Configuration Fields and Descriptions
-### Scan
+
+# Plugin Configuration Fields and Descriptions
+## Scan Type
+<b>Description: </b>Specified the input on scan field based on the selected scan type.
+<br>
+<b>Option:</b>
+- `Image`: Provide the image to be scanned.
+- `Directory`: Provide the target directory path to be scanned.
+- `Tar File`: Provide the target tar file path to be scanned.
+- `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
+## Scan
 <b>Input: </b> Image name, Directory path, tar file path, or sbom file path.
-### Fail Criteria Severity
+## Fail Criteria Severity
 <b>Description: </b>Select a threshold that will fail the build when equal to or above the severity found in the results. 
 <br>
 <b>Option:</b> 
@@ -42,26 +52,27 @@ Provides the following:
 - Low
 - Negligible
 - Unknown
-### Scan Type
-<b>Description: </b>Specified the input on scan field based on the selected scan type.
+## Ignore Package Names
+<b>Usage:</b> Ignore the following package names when scanning. Leave blank if not using.
 <br>
-<b>Option:</b>
-- `Image`: Provide the image to be scanned.
-- `Directory`: Provide the target directory path to be scanned.
-- `Tar File`: Provide the target tar file path to be scanned.
-- `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
+Example Input Format: dpkg,tar,gzip,...
+## Ignore CVEs
+<b>Usage:</b> Ignore the following CVEs when scanning. Leave blank if not using.
+<br>
+Example Input Format: CVE-2022-24775,CVE-2022-1304,TEMP-0000000-6F6CD4,...
 
-### Skip Build Fail
+
+## Skip Build Fail
 Default value is `false / unchecked`.
 <br>
 <b>Warning:</b> If the value is checked, it will restrict the plugin from failing the build based on the assessment result.
 
-### Skip Database Update
+## Skip Database Update
 Default value is `false / unchecked`.
 <br>
 <b>Warning:</b> If the value is checked, it will skip check database update while scanning.
 
-## Usage as Pipeline
+# Usage as Pipeline
 ```sh
 pipeline {
     agent any
