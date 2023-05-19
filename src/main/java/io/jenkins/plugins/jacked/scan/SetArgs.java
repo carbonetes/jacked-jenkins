@@ -1,18 +1,25 @@
-package io.jenkins.plugins.jacked.scanType;
+package io.jenkins.plugins.jacked.scan;
 
 import java.util.ArrayList;
 
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import io.jenkins.plugins.jacked.os.CheckOS;
+import io.jenkins.plugins.jacked.save.FileFormat;
+import jenkins.model.Jenkins;
 
-public class ScanType {
+public class SetArgs {
     private static String JACKED = "jacked";
     private static final String FAILCRITERIA = "--fail-criteria";
     private static final String DIR = "--dir";
     private static final String TAR = "--tar";
     private static final String SBOM = "--sbom";
     private static final String CIMODE = "--ci";
+    private static final String FILE = "--file";
+    private static final String SKIPDBUPDATE = "--skip-db-update";
 
-    public static String[] scanTypeArgs(String scanType, String severityType, String scanName, Boolean ciMode) {
+    public static String[] scanTypeArgs(String scanType, String severityType, String scanName,
+            Boolean skipDbUpdate) {
         String osName = CheckOS.osName();
 
         if (!CheckOS.isWindows(osName)) {
@@ -66,9 +73,17 @@ public class ScanType {
                 cmdArgs.add(severityType);
                 break;
         }
-        if (Boolean.TRUE.equals(ciMode)) {
-            cmdArgs.add(CIMODE);
+        // CI Mode Enable
+        cmdArgs.add(CIMODE);
+
+        // Skip DB Update Enable
+        if (Boolean.TRUE.equals(skipDbUpdate)) {
+            cmdArgs.add(SKIPDBUPDATE);
         }
+
+        // Save output file
+        cmdArgs.add(FILE);
+        cmdArgs.add(FileFormat.getFileName());
 
         String[] args = cmdArgs.toArray(new String[cmdArgs.size()]);
         return args;

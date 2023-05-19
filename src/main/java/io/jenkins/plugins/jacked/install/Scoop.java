@@ -13,7 +13,8 @@ public class Scoop {
         // Check Scoop
         public static void checkScoop(FilePath workspace, EnvVars env, Launcher launcher,
                         TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+                        String scanName, String scanType, String severityType, Boolean skipFail,
+                        Boolean skipDbUpdate)
                         throws IOException, InterruptedException {
 
                 String[] checkScoop = { "powershell.exe", "scoop -v" };
@@ -25,18 +26,19 @@ public class Scoop {
                 if (checkScoopRet != 0) {
                         listener.getLogger().println("Scoop is not installed.");
                         listener.getLogger().println("Preparing to install scoop...");
-                        installScoop(workspace, env, launcher, listener, scanName, scanType, severityType,
-                                        ciMode, skipFail);
+                        installScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                                        skipDbUpdate);
                 } else {
                         listener.getLogger().println("Preparing to install jacked via scoop...");
-                        installJacked(workspace, env, launcher, listener, scanName, scanType, severityType,
-                                        ciMode, skipFail);
+                        installJacked(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                                        skipDbUpdate);
                 }
         }
 
         // Scoop Install
         public static void installScoop(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+                        String scanName, String scanType, String severityType, Boolean skipFail,
+                        Boolean skipDbUpdate)
                         throws IOException, InterruptedException {
 
                 listener.getLogger().println("Installing Scoop...");
@@ -46,14 +48,15 @@ public class Scoop {
                                 .start();
                 process.waitFor();
                 listener.getLogger().println("Scoop installation finished");
-                installJacked(workspace, env, launcher, listener, scanName, scanType, severityType,
-                                ciMode, skipFail);
+                installJacked(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                                skipDbUpdate);
 
         }
 
         // Scoop Install Jacked
         public static void installJacked(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+                        String scanName, String scanType, String severityType, Boolean skipFail,
+                        Boolean skipDbUpdate)
                         throws IOException, InterruptedException {
 
                 // Clean up jacked bucket
@@ -75,8 +78,8 @@ public class Scoop {
                 listener.getLogger().println("Jacked Installed Successfully");
 
                 // Start compiling arguments for scanning
-                Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, ciMode,
-                                skipFail);
+                Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
+                                skipFail, skipDbUpdate);
 
         }
 

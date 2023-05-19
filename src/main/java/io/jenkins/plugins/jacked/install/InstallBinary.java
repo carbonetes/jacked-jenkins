@@ -13,7 +13,8 @@ import io.jenkins.plugins.jacked.Jacked;
 public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher, TaskListener listener, EnvVars env,
-            String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+            String scanName, String scanType, String severityType, Boolean skipFail,
+            Boolean skipDbUpdate)
             throws InterruptedException, IOException, URISyntaxException {
         // Create a temporary directory inside the workspace to store the downloaded
         // files
@@ -38,7 +39,8 @@ public class InstallBinary {
         // Check if the installation was successful and print a message to the listener
         if (ret == 0) {
             listener.getLogger().println("Jacked Installed Successfully");
-            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, ciMode, skipFail);
+            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, skipFail,
+                    skipDbUpdate);
 
         } else {
             listener.getLogger().println("Installation failed - error code: " + ret);
@@ -46,13 +48,13 @@ public class InstallBinary {
     }
 
     public static void setPath(FilePath workspace, Launcher launcher, TaskListener listener,
-            EnvVars env, String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+            EnvVars env, String scanName, String scanType, String severityType, Boolean skipFail,
+            Boolean skipDbUpdate)
             throws IOException, InterruptedException {
 
         FilePath jackedExecutable = workspace.child("jackedTmpDir");
         String jackedExecutablePath = jackedExecutable.getRemote();
         listener.getLogger().println(jackedExecutablePath);
-        // String usrLocalBin = "/usr/local/bin/";
         String binPath = "/bin";
 
         String[] cmd = new String[] { "sh", "-c",
@@ -71,8 +73,8 @@ public class InstallBinary {
             listener.getLogger().println("PATH environment variable has been updated successfully.");
 
             // Compile Arguments for scanning.
-            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, ciMode,
-                    skipFail);
+            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
+                    skipFail, skipDbUpdate);
         }
     }
 

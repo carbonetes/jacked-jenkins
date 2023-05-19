@@ -15,14 +15,15 @@
     </f:entry>
     
     <f:entry field="skipFail">
-      <f:checkbox />
-      <label>${%Skip Build Failed}</label>
+      <f:checkbox default="false"/>
+      <label>${%Skip Build Fail}</label>
+    </f:entry>
+    
+    <f:entry field="skipDbUpdate">
+      <f:checkbox default="false"/>
+      <label>${%Skip Database Update.}</label>
     </f:entry> 
 
-    <f:entry field="autoInstall">
-      <f:checkbox default="true"/>
-      <label>${%Download and install jacked automatically}</label>
-    </f:entry> 
   </f:section>
 
 </j:jelly>

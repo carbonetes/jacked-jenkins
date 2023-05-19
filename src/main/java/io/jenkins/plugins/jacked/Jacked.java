@@ -27,9 +27,10 @@ import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.jacked.install.ExecuteBinary;
 import io.jenkins.plugins.jacked.install.InstallBinary;
+import io.jenkins.plugins.jacked.install.JackedExist;
 import io.jenkins.plugins.jacked.install.Scoop;
 import io.jenkins.plugins.jacked.os.CheckOS;
-import io.jenkins.plugins.jacked.scanType.ScanType;
+import io.jenkins.plugins.jacked.scan.SetArgs;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -37,16 +38,13 @@ import net.sf.json.JSONObject;
 public class Jacked extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(Jacked.class.getName());
 
-    private static final String SCAN_TARGET_DEFAULT = "dir:/";
-    private static final String REP_NAME_DEFAULT = "jackedReport_${JOB_NAME}_${BUILD_NUMBER}.txt";
-
     private String scanDest;
     private String repName;
     private String scanName;
     private String severityType;
-    private Boolean autoInstall;
     private String scanType;
     private Boolean skipFail;
+    private Boolean skipDbUpdate;
 
     public String getScanDest() {
         return scanDest;
@@ -80,14 +78,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.severityType = severityType;
     }
 
-    public Boolean getAutoInstall() {
-        return autoInstall;
-    }
-
-    public void setAutoInstall(Boolean autoInstall) {
-        this.autoInstall = autoInstall;
-    }
-
     public String getScanType() {
         return scanType;
     }
@@ -104,63 +94,69 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.skipFail = skipFail;
     }
 
+    public Boolean getSkipDbUpdate() {
+        return skipDbUpdate;
+    }
+
+    public void setSkipDbUpdate(Boolean skipDbUpdate) {
+        this.skipDbUpdate = skipDbUpdate;
+    }
+
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String scanName, String severityType, Boolean autoInstall,
-            String scanType, Boolean skipFail) {
+    public Jacked(String scanDest, String repName, String scanName, String severityType,
+            String scanType, Boolean skipFail, Boolean skipDbUpdate) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
-        this.autoInstall = autoInstall;
         this.scanType = scanType;
         this.skipFail = skipFail;
+        this.skipDbUpdate = skipDbUpdate;
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
 
-        // Set CI Mode
-        Boolean ciMode = true;
-
         String osName = CheckOS.osName();
         // Jacked Running on this OS.
         listener.getLogger().println("Jacked Plugin - Running on: " + osName);
 
-        // Check OS and program or command jacked is available
-        if (Boolean.TRUE.equals(autoInstall)) {
+        // Check OS
+        // Auto install, check jacked exists on workspace, if true skip install
+        if (Boolean.FALSE.equals(JackedExist.checkIfExists(workspace))) {
             if (CheckOS.isWindows(osName)) {
                 // Windows specific action
-                Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType,
-                        ciMode, skipFail);
+                Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                        skipDbUpdate);
             } else {
                 try {
-                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType, severityType,
-                            ciMode, skipFail);
+                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType,
+                            severityType,
+                            skipFail, skipDbUpdate);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
 
                 }
             }
         } else {
-            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
-                    ciMode, skipFail);
+            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
+                    skipDbUpdate);
         }
-
     }
 
     public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-            String scanName, String scanType, String severityType, Boolean ciMode, Boolean skipFail)
+            String scanName, String scanType, String severityType, Boolean skipFail,
+            Boolean skipDbUpdate)
             throws InterruptedException, IOException {
 
         // Modify Jacked command with argument
         if (scanName != null && !scanName.equals("")) {
 
             // Determine the Arguments
-            String[] cmdArgs = ScanType.scanTypeArgs(scanType, severityType, scanName,
-                    ciMode);
+            String[] cmdArgs = SetArgs.scanTypeArgs(scanType, severityType, scanName, skipDbUpdate);
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener, skipFail);
         } else {
             listener.getLogger().println("Please input your scan name");
@@ -192,18 +188,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return true;
         }
 
-        public String getDefaultScanDest() {
-            return SCAN_TARGET_DEFAULT;
-        }
-
         @Override
         public String getDisplayName() {
             return "Vulnerability scan with jacked";
         }
 
-        public String getDefaultRepName() {
-            return REP_NAME_DEFAULT;
-        }
 
         @POST
         public ListBoxModel doFillSeverityTypeItems() throws AccessDeniedException {
