@@ -38,9 +38,6 @@ import net.sf.json.JSONObject;
 public class Jacked extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(Jacked.class.getName());
 
-    private static final String SCAN_TARGET_DEFAULT = "dir:/";
-    private static final String REP_NAME_DEFAULT = "jackedResult_${JOB_NAME}_${BUILD_NUMBER}.txt";
-
     private String scanDest;
     private String repName;
     private String scanName;
@@ -191,18 +188,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return true;
         }
 
-        public String getDefaultScanDest() {
-            return SCAN_TARGET_DEFAULT;
-        }
-
         @Override
         public String getDisplayName() {
             return "Vulnerability scan with jacked";
         }
 
-        public static String getDefaultRepName() {
-            return REP_NAME_DEFAULT;
-        }
 
         @POST
         public ListBoxModel doFillSeverityTypeItems() throws AccessDeniedException {

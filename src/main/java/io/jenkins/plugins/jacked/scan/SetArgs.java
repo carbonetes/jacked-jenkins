@@ -2,8 +2,11 @@ package io.jenkins.plugins.jacked.scan;
 
 import java.util.ArrayList;
 
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.save.FileFormat;
+import jenkins.model.Jenkins;
 
 public class SetArgs {
     private static String JACKED = "jacked";
@@ -80,7 +83,7 @@ public class SetArgs {
 
         // Save output file
         cmdArgs.add(FILE);
-        cmdArgs.add(FileFormat.fileName());
+        cmdArgs.add(FileFormat.getFileName());
 
         String[] args = cmdArgs.toArray(new String[cmdArgs.size()]);
         return args;

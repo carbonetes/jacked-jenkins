@@ -14,7 +14,7 @@ public class CheckVersion {
             String latestVersion = getLatestVersion(repositoryUrl);
             return latestVersion;
         } catch (IOException e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
         return "";
     }
