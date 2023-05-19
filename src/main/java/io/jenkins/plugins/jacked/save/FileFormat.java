@@ -17,8 +17,6 @@ public class FileFormat extends RunListener<Run<?, ?>> {
         String jobName = run.getParent().getFullName();
         int buildNumber = run.getNumber();
 
-
-        // Get the Jenkins instance
         Jenkins jenkins = Jenkins.getInstanceOrNull();
         if (jenkins != null) {
             // Get the queue
@@ -45,10 +43,8 @@ public class FileFormat extends RunListener<Run<?, ?>> {
 
             // Construct the file name using jobName and buildNumber
             fileName = "jacked_result_" + jobName + "_" + buildNumber + ".txt";
-         
-        }
+        } 
     }
-
     public static String getFileName() {
         return fileName != null ? fileName : "";
     }

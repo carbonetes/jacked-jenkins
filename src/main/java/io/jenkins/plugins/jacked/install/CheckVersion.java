@@ -28,14 +28,13 @@ public class CheckVersion {
         connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
         try (InputStream inputStream = connection.getInputStream()) {
-            Scanner scanner = new Scanner(inputStream);
+            Scanner scanner = new Scanner(inputStream, "UTF-8");  // Specify UTF-8 encoding
             String response = scanner.useDelimiter("\\A").next();
             scanner.close();
 
             // Parse the JSON response to extract the latest version
             // Assuming the response is in the format: {"tag_name": "vX.X.X"}
-            String tagName = response.split("\"tag_name\":")[1].split("\"")[1];
-            return tagName;
+            return response.split("\"tag_name\":")[1].split("\"")[1];
         }
     }
 }
