@@ -2,11 +2,8 @@ package io.jenkins.plugins.jacked.scan;
 
 import java.util.ArrayList;
 
-import hudson.model.Run;
-import hudson.model.TaskListener;
 import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.save.FileFormat;
-import jenkins.model.Jenkins;
 
 public class SetArgs {
     private static String JACKED = "jacked";
@@ -17,12 +14,15 @@ public class SetArgs {
     private static final String CIMODE = "--ci";
     private static final String FILE = "--file";
     private static final String SKIPDBUPDATE = "--skip-db-update";
+    private static final String IGNOREPACKAGENAMES = "--ignore-package-names";
+    private static final String IGNOREVULNCVES = "--ignore-vuln-cves";
 
+            
     public static String[] scanTypeArgs(String scanType, String severityType, String scanName,
-            Boolean skipDbUpdate) {
+            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves) {
         String osName = CheckOS.osName();
 
-        if (!CheckOS.isWindows(osName)) {
+        if (Boolean.FALSE.equals(CheckOS.isWindows(osName))) {
             JACKED = "./jackedTmpDir/bin/jacked";
         }
 
@@ -81,11 +81,19 @@ public class SetArgs {
             cmdArgs.add(SKIPDBUPDATE);
         }
 
+        if (ignorePackageNames != null && (ignorePackageNames.length() > 0)) {
+                cmdArgs.add(IGNOREPACKAGENAMES);
+                cmdArgs.add(ignorePackageNames);
+        }
+        if (ignoreCves != null && (ignoreCves.length() > 0)) {
+                cmdArgs.add(IGNOREVULNCVES);
+                cmdArgs.add(ignoreCves);
+        }
+
         // Save output file
         cmdArgs.add(FILE);
         cmdArgs.add(FileFormat.getFileName());
 
-        String[] args = cmdArgs.toArray(new String[cmdArgs.size()]);
-        return args;
+        return cmdArgs.toArray(new String[cmdArgs.size()]);
     }
 }
