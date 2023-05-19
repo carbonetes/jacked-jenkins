@@ -74,7 +74,9 @@ pipeline {
                     severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                         // Severity: critical, high, medium, low, negligible, unknown.
                     skipFail: false,                    // Default as false. Skip build to fail based on the assessment.
-                    skipDbUpdate: false                 // Default as false. Skip Database Update when scanning.
+                    skipDbUpdate: false,                // Default as false. Skip Database Update when scanning.
+                    ignorePackageNames: '',             // Ignore Package names when scanning... e.g. input: dpkg,tar,bash,...
+                    ignoreCves: ''                      // Ignore CVES when scanning... e.g. input: CVE-2022-1271,CVE-2022-3715,CVE-2022-1664,...
                 }
             }
         }
