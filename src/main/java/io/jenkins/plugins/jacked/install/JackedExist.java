@@ -7,6 +7,10 @@ import java.io.IOException;
 import hudson.FilePath;
 
 public class JackedExist {
+    private JackedExist() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Boolean checkIfExists(FilePath workspace) {
 
         String workspacePath = workspace.getRemote();
@@ -18,9 +22,9 @@ public class JackedExist {
         if (Boolean.FALSE.equals(fileExists)) {
             try {
                 String filePath = workspacePath + "/" + fileName;
-                FileWriter writer = new FileWriter(filePath);
-                writer.write(fileContent);
-                writer.close();
+                try (FileWriter writer = new FileWriter(filePath)) {
+                    writer.write(fileContent);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -30,9 +34,9 @@ public class JackedExist {
         }
     }
 
-    private static boolean checkFileExists(String workspacePath, String fileName) {
-        String filePath = workspacePath + "/" + fileName;
-        File file = new File(filePath);
+    private static Boolean checkFileExists(String workspacePath, String fileName) {
+        
+        File file = new File(workspacePath, fileName);
         return file.exists() && !file.isDirectory();
     }
 }

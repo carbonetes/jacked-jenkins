@@ -45,7 +45,7 @@ public class FileFormat extends RunListener<Run<?, ?>> {
 
             // Construct the file name using jobName and buildNumber
             fileName = "jacked_result_" + jobName + "_" + buildNumber + ".txt";
-            System.out.println("File Name: " + fileName);
+         
         }
     }
 
