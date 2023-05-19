@@ -14,7 +14,7 @@ public class InstallBinary {
 
     public static void installJacked(FilePath workspace, Launcher launcher, TaskListener listener, EnvVars env,
             String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate)
+            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
             throws InterruptedException, IOException, URISyntaxException {
         // Create a temporary directory inside the workspace to store the downloaded
         // files
@@ -40,7 +40,7 @@ public class InstallBinary {
         if (ret == 0) {
             listener.getLogger().println("Jacked Installed Successfully");
             setPath(workspace, launcher, listener, env, scanName, scanType, severityType, skipFail,
-                    skipDbUpdate);
+                    skipDbUpdate, ignorePackageNames, ignoreCves);
 
         } else {
             listener.getLogger().println("Installation failed - error code: " + ret);
@@ -49,7 +49,7 @@ public class InstallBinary {
 
     public static void setPath(FilePath workspace, Launcher launcher, TaskListener listener,
             EnvVars env, String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate)
+            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
             throws IOException, InterruptedException {
 
         FilePath jackedExecutable = workspace.child("jackedTmpDir");
@@ -74,7 +74,7 @@ public class InstallBinary {
 
             // Compile Arguments for scanning.
             Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
-                    skipFail, skipDbUpdate);
+                    skipFail, skipDbUpdate, ignorePackageNames, ignoreCves);
         }
     }
 

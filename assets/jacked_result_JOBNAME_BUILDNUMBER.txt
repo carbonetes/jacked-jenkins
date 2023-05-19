@@ -1,0 +1,162 @@
+
+Image: ubuntu
+
+Generated CDX BOM
+
++---------------------+------------------+-----------------------------------------+
+|       Package       |       Type       |                 Version                 |
++---------------------+------------------+-----------------------------------------+
+| adduser             | library          | 3.118ubuntu5                            |
+| apt                 | library          | 2.4.8                                   |
+| base-files          | library          | 12ubuntu4.2                             |
+| base-passwd         | library          | 3.5.52build1                            |
+| bash                | library          | 5.1-6ubuntu1                            |
+| bsdutils            | library          | 1:2.37.2-4ubuntu3                       |
+| coreutils           | library          | 8.32-4.1ubuntu1                         |
+| dash                | library          | 0.5.11+git20210903+057cd650a4ed-3build1 |
+| debconf             | library          | 1.5.79ubuntu1                           |
+| debianutils         | library          | 5.5-1ubuntu2                            |
+| diffutils           | library          | 1:3.8-0ubuntu2                          |
+| e2fsprogs           | library          | 1.46.5-2ubuntu1.1                       |
+| findutils           | library          | 4.8.0-1ubuntu3                          |
+| gcc-12-base         | library          | 12.1.0-2ubuntu1~22.04                   |
+| gpgv                | library          | 2.2.27-3ubuntu2.1                       |
+| grep                | library          | 3.7-1build1                             |
+| hostname            | library          | 3.23ubuntu2                             |
+| init-system-helpers | library          | 1.62                                    |
+| libacl1             | library          | 2.3.1-1                                 |
+| libapt-pkg6.0       | library          | 2.4.8                                   |
+| libattr1            | library          | 1:2.5.1-1build1                         |
+| libaudit-common     | library          | 1:3.0.7-1build1                         |
+| libaudit1           | library          | 1:3.0.7-1build1                         |
+| libblkid1           | library          | 2.37.2-4ubuntu3                         |
+| libbz2-1.0          | library          | 1.0.8-5build1                           |
+| libc-bin            | library          | 2.35-0ubuntu3.1                         |
+| libc6               | library          | 2.35-0ubuntu3.1                         |
+| libcap-ng0          | library          | 0.7.9-2.2build3                         |
+| libcap2             | library          | 1:2.44-1build3                          |
+| libcom-err2         | library          | 1.46.5-2ubuntu1.1                       |
+| libcrypt1           | library          | 1:4.4.27-1                              |
+| libdb5.3            | library          | 5.3.28+dfsg1-0.8ubuntu3                 |
+| libdebconfclient0   | library          | 0.261ubuntu1                            |
+| libext2fs2          | library          | 1.46.5-2ubuntu1.1                       |
+| libffi8             | library          | 3.4.2-4                                 |
+| libgcc-s1           | library          | 12.1.0-2ubuntu1~22.04                   |
+| libgcrypt20         | library          | 1.9.4-3ubuntu3                          |
+| libgmp10            | library          | 2:6.2.1+dfsg-3ubuntu1                   |
+| libgnutls30         | library          | 3.7.3-4ubuntu1.1                        |
+| libgpg-error0       | library          | 1.43-3                                  |
+| libgssapi-krb5-2    | library          | 1.19.2-2ubuntu0.1                       |
+| libhogweed6         | library          | 3.7.3-1build2                           |
+| libidn2-0           | library          | 2.3.2-2build1                           |
+| libk5crypto3        | library          | 1.19.2-2ubuntu0.1                       |
+| libkeyutils1        | library          | 1.6.1-2ubuntu3                          |
+| libkrb5-3           | library          | 1.19.2-2ubuntu0.1                       |
+| libkrb5support0     | library          | 1.19.2-2ubuntu0.1                       |
+| liblz4-1            | library          | 1.9.3-2build2                           |
+| liblzma5            | library          | 5.2.5-2ubuntu1                          |
+| libmount1           | library          | 2.37.2-4ubuntu3                         |
+| libncurses6         | library          | 6.3-2                                   |
+| libncursesw6        | library          | 6.3-2                                   |
+| libnettle8          | library          | 3.7.3-1build2                           |
+| libnsl2             | library          | 1.3.0-2build2                           |
+| libp11-kit0         | library          | 0.24.0-6build1                          |
+| libpam-modules      | library          | 1.4.0-11ubuntu2.1                       |
+| libpam-modules-bin  | library          | 1.4.0-11ubuntu2.1                       |
+| libpam-runtime      | library          | 1.4.0-11ubuntu2.1                       |
+| libpam0g            | library          | 1.4.0-11ubuntu2.1                       |
+| libpcre2-8-0        | library          | 10.39-3ubuntu0.1                        |
+| libpcre3            | library          | 2:8.39-13ubuntu0.22.04.1                |
+| libprocps8          | library          | 2:3.3.17-6ubuntu2                       |
+| libseccomp2         | library          | 2.5.3-2ubuntu2                          |
+| libselinux1         | library          | 3.3-1build2                             |
+| libsemanage-common  | library          | 3.3-1build2                             |
+| libsemanage2        | library          | 3.3-1build2                             |
+| libsepol2           | library          | 3.3-1build1                             |
+| libsmartcols1       | library          | 2.37.2-4ubuntu3                         |
+| libss2              | library          | 1.46.5-2ubuntu1.1                       |
+| libssl3             | library          | 3.0.2-0ubuntu1.7                        |
+| libstdc++6          | library          | 12.1.0-2ubuntu1~22.04                   |
+| libsystemd0         | library          | 249.11-0ubuntu3.6                       |
+| libtasn1-6          | library          | 4.18.0-4build1                          |
+| libtinfo6           | library          | 6.3-2                                   |
+| libtirpc-common     | library          | 1.3.2-2ubuntu0.1                        |
+| libtirpc3           | library          | 1.3.2-2ubuntu0.1                        |
+| libudev1            | library          | 249.11-0ubuntu3.6                       |
+| libunistring2       | library          | 1.0-1                                   |
+| libuuid1            | library          | 2.37.2-4ubuntu3                         |
+| libxxhash0          | library          | 0.8.1-1                                 |
+| libzstd1            | library          | 1.4.8+dfsg-3build1                      |
+| login               | library          | 1:4.8.1-2ubuntu2.1                      |
+| logsave             | library          | 1.46.5-2ubuntu1.1                       |
+| lsb-base            | library          | 11.1.0ubuntu4                           |
+| mawk                | library          | 1.3.4.20200120-3                        |
+| mount               | library          | 2.37.2-4ubuntu3                         |
+| ncurses-base        | library          | 6.3-2                                   |
+| ncurses-bin         | library          | 6.3-2                                   |
+| passwd              | library          | 1:4.8.1-2ubuntu2.1                      |
+| perl-base           | library          | 5.34.0-3ubuntu1.1                       |
+| procps              | library          | 2:3.3.17-6ubuntu2                       |
+| sed                 | library          | 4.8-1ubuntu2                            |
+| sensible-utils      | library          | 0.0.17                                  |
+| sysvinit-utils      | library          | 3.01-1ubuntu1                           |
+| ubuntu-keyring      | library          | 2021.03.26                              |
+| usrmerge            | library          | 25ubuntu2                               |
+| util-linux          | library          | 2.37.2-4ubuntu3                         |
+| zlib1g              | library          | 1:1.2.11.dfsg-2ubuntu9.2                |
+|                     | operating-system |                                         |
++---------------------+------------------+-----------------------------------------+
+
+Analyzed CDX BOM 
+
++----------------+----------+-----------------------------------+
+| Vulnerability  | Severity |          Recommendation           |
++----------------+----------+-----------------------------------+
+| CVE-2023-2602  | UNKNOWN  | Upgrade libcap2 to 1:2.66-4       |
+| CVE-2023-2603  | UNKNOWN  | Upgrade libcap2 to 1:2.66-4       |
+| CVE-2018-1121  | UNKNOWN  | -                                 |
+| CVE-2021-46848 | UNKNOWN  | Upgrade libtasn1-6 to 4.19.0-2    |
+| CVE-2021-46848 | UNKNOWN  | Upgrade libtasn1-6 to 4.19.0-2    |
+| CVE-2022-1304  | UNKNOWN  | Upgrade e2fsprogs to 1.46.6~rc1-1 |
+| CVE-2022-1304  | UNKNOWN  | Upgrade e2fsprogs to 1.46.6~rc1-1 |
+| CVE-2021-3996  | UNKNOWN  | Upgrade util-linux to 2.37.3-1    |
+| CVE-2021-3996  | UNKNOWN  | Upgrade util-linux to 2.37.3-1    |
+| CVE-2021-3995  | UNKNOWN  | Upgrade util-linux to 2.37.3-1    |
+| CVE-2021-3995  | UNKNOWN  | Upgrade util-linux to 2.37.3-1    |
+| CVE-2022-0563  | MEDIUM   | Upgrade util-linux to 2.37.4      |
+| CVE-2021-3995  | MEDIUM   | Upgrade util-linux to 2.37.3      |
+| CVE-2021-3996  | MEDIUM   | Upgrade util-linux to 2.37.3      |
++----------------+----------+-----------------------------------+
+
+Packages:        99
+Vulnerabilities: 14
+
+Whitelist / Ignore List
+
++--------+---------------+
+| Ignore |     List      |
++--------+---------------+
+| CVE    | cve-2022-3715 |
+| Name   | tar,gzip,dpkg |
++--------+---------------+
+
+Assessment Result:
+
++----------+-------+
+| Severity | Count |
++----------+-------+
+| Unknown  | 11    |
+| Medium   | 3     |
++----------+-------+
++------------+---------------+----------+
+|  Package   |      CVE      | Severity |
++------------+---------------+----------+
+| util-linux | CVE-2022-0563 | MEDIUM   |
+| util-linux | CVE-2021-3995 | MEDIUM   |
+| util-linux | CVE-2021-3996 | MEDIUM   |
++------------+---------------+----------+
+[CVE-2022-0563] : Upgrade util-linux to 2.37.4
+[CVE-2021-3995] : Upgrade util-linux to 2.37.3
+[CVE-2021-3996] : Upgrade util-linux to 2.37.3
+
+Failed:     3 out of 14 found vulnerabilities failed the assessment 

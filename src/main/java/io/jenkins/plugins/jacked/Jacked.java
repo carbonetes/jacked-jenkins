@@ -45,6 +45,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanType;
     private Boolean skipFail;
     private Boolean skipDbUpdate;
+    private String ignorePackageNames;
+    private String ignoreCves;
 
     public String getScanDest() {
         return scanDest;
@@ -102,11 +104,27 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.skipDbUpdate = skipDbUpdate;
     }
 
+    public String getIgnorePackageNames() {
+        return ignorePackageNames;
+    }
+
+    public void setIgnorePackageNames(String ignorePackageNames) {
+        this.ignorePackageNames = ignorePackageNames;
+    }
+    
+    public String getIgnoreCves() {
+        return ignoreCves;
+    }
+
+    public void setIgnoreCves(String ignoreCves) {
+        this.ignoreCves = ignoreCves;
+    }
+
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
     public Jacked(String scanDest, String repName, String scanName, String severityType,
-            String scanType, Boolean skipFail, Boolean skipDbUpdate) {
+            String scanType, Boolean skipFail, Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves) {
         this.scanDest = scanDest;
         this.repName = repName;
         this.scanName = scanName;
@@ -114,6 +132,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.scanType = scanType;
         this.skipFail = skipFail;
         this.skipDbUpdate = skipDbUpdate;
+        this.ignorePackageNames = ignorePackageNames;
+        this.ignoreCves = ignoreCves;
     }
 
     @Override
@@ -130,12 +150,12 @@ public class Jacked extends Builder implements SimpleBuildStep {
             if (CheckOS.isWindows(osName)) {
                 // Windows specific action
                 Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                        skipDbUpdate);
+                        skipDbUpdate, ignorePackageNames, ignoreCves);
             } else {
                 try {
                     InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType,
                             severityType,
-                            skipFail, skipDbUpdate);
+                            skipFail, skipDbUpdate, ignorePackageNames, ignoreCves);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
 
@@ -143,20 +163,20 @@ public class Jacked extends Builder implements SimpleBuildStep {
             }
         } else {
             compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                    skipDbUpdate);
+                    skipDbUpdate, ignorePackageNames, ignoreCves);
         }
     }
 
     public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
             String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate)
+            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
             throws InterruptedException, IOException {
 
         // Modify Jacked command with argument
         if (scanName != null && !scanName.equals("")) {
 
             // Determine the Arguments
-            String[] cmdArgs = SetArgs.scanTypeArgs(scanType, severityType, scanName, skipDbUpdate);
+            String[] cmdArgs = SetArgs.scanTypeArgs(scanType, severityType, scanName, skipDbUpdate, ignorePackageNames, ignoreCves);
             ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener, skipFail);
         } else {
             listener.getLogger().println("Please input your scan name");
