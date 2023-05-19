@@ -42,9 +42,16 @@ public class FileFormat extends RunListener<Run<?, ?>> {
             }
 
             // Construct the file name using jobName and buildNumber
-            fileName = "jacked_result_" + jobName + "_" + buildNumber + ".txt";
+            String localFileName = "jacked_result_" + jobName + "_" + buildNumber + ".txt";
+
+            setFileName(localFileName);
         } 
     }
+    
+    private static void setFileName(String value) {
+        fileName = value;
+    }
+    
     public static String getFileName() {
         return fileName != null ? fileName : "";
     }
