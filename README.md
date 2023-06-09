@@ -1,4 +1,4 @@
-# Jacked
+# Jenkins Plugin: Jacked
 
 ## Introduction
 
