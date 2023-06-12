@@ -1,9 +1,12 @@
+<p align="center">
+<img src="assets/logo.png">
+</p>
+
+![Carbonetes-Jacked(https://github.com/carbonetes/jacked)](https://img.shields.io/badge/carbonetes-jacked-%232f7ea3)
+![Jacked-Jenkins](https://img.shields.io/badge/jacked-jenkins--plugin-%232f7ea3)
 # Jacked
 
 ## Introduction
-https://img.shields.io/badge/carbonetes-jacked-%232f7ea3
-<br>
-https://img.shields.io/badge/jacked-jenkins--plugin-%232f7ea3
 <br>
 [Jacked](https://github.com/carbonetes/jacked) provides organizations with a more comprehensive look at their application to take calculated actions and create a better security approach. Its primary purpose is to scan vulnerabilities to implement subsequent risk mitigation measures.
 
