@@ -20,6 +20,8 @@ public class InstallBinary {
         // files
         FilePath jackedTmpDir = workspace.child("jackedTmpDir");
         jackedTmpDir.mkdirs();
+        FilePath parent = workspace.getParent().child("jacked-db");
+        parent.mkdirs();
 
         // Download the install script
         String installScriptUrl = "https://raw.githubusercontent.com/carbonetes/jacked/main/install.sh";
