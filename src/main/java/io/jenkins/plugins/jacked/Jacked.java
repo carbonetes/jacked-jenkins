@@ -100,7 +100,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         return skipDbUpdate;
     }
 
-public void setSkipDbUpdate(Boolean skipDbUpdate) {
+    public void setSkipDbUpdate(Boolean skipDbUpdate) {
         this.skipDbUpdate = skipDbUpdate;
     }
 
