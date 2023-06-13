@@ -23,11 +23,11 @@
         </license>
     </licenses>
 
-    <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
-        <connection>scm:git:https://github.com/${gitHubRepo}</connection>
-        <developerConnection>scm:git:https://github.com/${gitHubRepo}</developerConnection>
+    <scm>
+        <connection>scm:git:https://github.com/jenkinsci/jacked-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/jenkinsci/jacked-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/jacked-plugin</url>
         <tag>1.3.1</tag>
-        <url>https://github.com/${gitHubRepo}</url>
     </scm>
 
     <properties>
@@ -36,7 +36,6 @@
 
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
         <jenkins.version>2.375.4</jenkins.version>
-        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
 
     <repositories>
@@ -45,6 +44,7 @@
             <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
