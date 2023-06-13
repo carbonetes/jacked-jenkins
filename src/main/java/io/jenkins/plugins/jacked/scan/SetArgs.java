@@ -15,7 +15,7 @@ public class SetArgs {
     private static final String FILE = "--file";
     private static final String SKIPDBUPDATE = "--skip-db-update";
     private static final String IGNOREPACKAGENAMES = "--ignore-package-names";
-    private static final String IGNOREVULNCVES = "--ignore-vuln-cves";
+    private static final String IGNOREVULNCVES = "--ignore-cves";
 
             
     public static String[] scanTypeArgs(String scanType, String severityType, String scanName,
@@ -34,8 +34,6 @@ public class SetArgs {
                 String image = scanName;
                 cmdArgs.add(JACKED);
                 cmdArgs.add(image);
-                cmdArgs.add(FAILCRITERIA);
-                cmdArgs.add(severityType);
                 break;
             case "directory":
                 // jacked --dir <path> --fail-criteria <severityType>
@@ -43,8 +41,6 @@ public class SetArgs {
                 cmdArgs.add(JACKED);
                 cmdArgs.add(DIR);
                 cmdArgs.add(path);
-                cmdArgs.add(FAILCRITERIA);
-                cmdArgs.add(severityType);
                 break;
             case "tar":
                 // jacked --dir <path> --fail-criteria <severityType>
@@ -52,8 +48,6 @@ public class SetArgs {
                 cmdArgs.add(JACKED);
                 cmdArgs.add(TAR);
                 cmdArgs.add(tarfile);
-                cmdArgs.add(FAILCRITERIA);
-                cmdArgs.add(severityType);
                 break;
             case "sbom":
                 // jacked --dir <path> --fail-criteria <severityType>
@@ -61,18 +55,19 @@ public class SetArgs {
                 cmdArgs.add(JACKED);
                 cmdArgs.add(SBOM);
                 cmdArgs.add(sbomjson);
-                cmdArgs.add(FAILCRITERIA);
-                cmdArgs.add(severityType);
                 break;
 
             default:
                 // jacked <image> --fail-criteria <severityType>
                 cmdArgs.add(JACKED);
                 cmdArgs.add(scanName);
-                cmdArgs.add(FAILCRITERIA);
-                cmdArgs.add(severityType);
                 break;
         }
+        
+        // Fail Criteria
+        cmdArgs.add(FAILCRITERIA);
+        cmdArgs.add(severityType);
+
         // CI Mode Enable
         cmdArgs.add(CIMODE);
 
