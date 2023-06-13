@@ -3,7 +3,7 @@
 </p>
 
 [![Carbonetes-Jacked](https://img.shields.io/badge/carbonetes-jacked-%232f7ea3)](https://github.com/carbonetes/jacked)
-![Jacked-Jenkins](https://img.shields.io/badge/jacked-jenkins--plugin-%232f7ea3)
+[![Jacked-Jenkins](https://img.shields.io/badge/jacked-jenkins--plugin-%232f7ea3)](https://plugins.jenkins.io/jacked)
 # Jenkins Plugin: Jacked
 
 ## Introduction
