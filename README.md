@@ -31,12 +31,11 @@ The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)
 
 # Output
 Provides the following:
-- `Quiet Mode`: Removed verbiage.
 - Show a list of packages.
 - `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
-- Show CI Assessment Result: Pass or Fail based on the selected fail criteria severity type.
+- Assessment Result: Pass or Fail based on the selected fail criteria severity type.
 - Saves output file on the workspace in every build. `jacked_result_$(JOBNAME)_$(BUILDNUMBER).txt`
-
+- Saves Stored Values JSON File for Environment Variables. `jacked_file.json`
 
 # Plugin Configuration Fields and Descriptions
 ## Scan Type
