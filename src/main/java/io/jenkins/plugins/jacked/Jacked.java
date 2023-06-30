@@ -3,10 +3,7 @@ package io.jenkins.plugins.jacked;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.AccessDeniedException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -25,21 +22,29 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
-import io.jenkins.plugins.jacked.install.ExecuteBinary;
+import io.jenkins.plugins.jacked.binary.Compile;
 import io.jenkins.plugins.jacked.install.InstallBinary;
 import io.jenkins.plugins.jacked.install.JackedExist;
 import io.jenkins.plugins.jacked.install.Scoop;
 import io.jenkins.plugins.jacked.os.CheckOS;
-import io.jenkins.plugins.jacked.scan.SetArgs;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
+import lombok.Getter;
+import lombok.Setter;
 import net.sf.json.JSONObject;
 
-public class Jacked extends Builder implements SimpleBuildStep {
-    private static final Logger LOGGER = Logger.getLogger(Jacked.class.getName());
+import io.jenkins.plugins.jacked.model.JackedConfig;
+import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
+/**
+ * @author Sairen Christian Buerano - Carbonetes
+ */
+@Getter
+@Setter
+public class Jacked extends Builder implements SimpleBuildStep {
+    
+    private JackedConfig jackedConfig;
     private String scanDest;
-    private String repName;
     private String scanName;
     private String severityType;
     private String scanType;
@@ -47,86 +52,14 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private Boolean skipDbUpdate;
     private String ignorePackageNames;
     private String ignoreCves;
-
-    public String getScanDest() {
-        return scanDest;
-    }
-
-    public void setScanDest(String scanDest) {
-        this.scanDest = scanDest;
-    }
-
-    public String getRepName() {
-        return repName;
-    }
-
-    public void setRepName(String repName) {
-        this.repName = repName;
-    }
-
-    public String getScanName() {
-        return scanName;
-    }
-
-    public void setScanName(String scanName) {
-        this.scanName = scanName;
-    }
-
-    public String getSeverityType() {
-        return severityType;
-    }
-
-    public void setSeverityType(String severityType) {
-        this.severityType = severityType;
-    }
-
-    public String getScanType() {
-        return scanType;
-    }
-
-    public void setScanType(String scanType) {
-        this.scanType = scanType;
-    }
-
-    public Boolean getSkipFail() {
-        return skipFail;
-    }
-
-    public void setSkipFail(Boolean skipFail) {
-        this.skipFail = skipFail;
-    }
-
-    public Boolean getSkipDbUpdate() {
-        return skipDbUpdate;
-    }
-
-    public void setSkipDbUpdate(Boolean skipDbUpdate) {
-        this.skipDbUpdate = skipDbUpdate;
-    }
-
-    public String getIgnorePackageNames() {
-        return ignorePackageNames;
-    }
-
-    public void setIgnorePackageNames(String ignorePackageNames) {
-        this.ignorePackageNames = ignorePackageNames;
-    }
-    
-    public String getIgnoreCves() {
-        return ignoreCves;
-    }
-
-    public void setIgnoreCves(String ignoreCves) {
-        this.ignoreCves = ignoreCves;
-    }
+    private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String repName, String scanName, String severityType,
-            String scanType, Boolean skipFail, Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves) {
+    public Jacked(String scanDest, String scanName, String severityType,
+            String scanType, Boolean skipFail, Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves, Map<String, String> content, JackedConfig jackedConfig) {
         this.scanDest = scanDest;
-        this.repName = repName;
         this.scanName = scanName;
         this.severityType = severityType;
         this.scanType = scanType;
@@ -134,64 +67,66 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.skipDbUpdate = skipDbUpdate;
         this.ignorePackageNames = ignorePackageNames;
         this.ignoreCves = ignoreCves;
+        this.content = content;
+        this.jackedConfig = new JackedConfig(scanDest, scanName, severityType, scanType, skipFail, skipDbUpdate,
+                ignorePackageNames, ignoreCves);
+
+        
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
 
-        String osName = CheckOS.osName();
-        // Jacked Running on this OS.
-        listener.getLogger().println("Jacked Plugin - Running on: " + osName);
+        // Initiate Jenkins and Input Config Model
+        JenkinsConfig jenkinsConfig = new JenkinsConfig(run, workspace, env, launcher, listener);
+        // Perform installation based on the OS
+        installJacked(jenkinsConfig);
+    }
+    
+    /**
+     * Check OS and Install Jacked
+     * Performs installation / update process of Jacked Binary inside the workspace based on the operating system.
+     * If has the updated version of the binary, installation / update process will be skipped.
+     * Unix / Windows
+     * @param jenkinsConfig
+     * @param jackedConfig
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void installJacked(JenkinsConfig jenkinsConfig)
+            throws IOException, InterruptedException {
+        
+        // Call instance method.
+        CheckOS checkOS = new CheckOS();
+        Scoop scoop = new Scoop();
+        InstallBinary installBinary = new InstallBinary();
+        JackedExist jackedExist = new JackedExist();
 
-        // Check OS
-        // Auto install, check jacked exists on workspace, if true skip install
-        if (Boolean.FALSE.equals(JackedExist.checkIfExists(workspace))) {
-            if (CheckOS.isWindows(osName)) {
-                // Windows specific action
-                Scoop.checkScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                        skipDbUpdate, ignorePackageNames, ignoreCves);
+        String osName = checkOS.osName();
+        jenkinsConfig.getListener().getLogger().println("Jacked Plugin - Running on: " + osName);
+
+        if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
+            if (Boolean.TRUE.equals(checkOS.isWindows(osName))) {
+                // Windows Installation Process
+                scoop.checkScoop(jenkinsConfig, jackedConfig);
             } else {
+                // Unix Installation Process
                 try {
-                    InstallBinary.installJacked(workspace, launcher, listener, env, scanName, scanType,
-                            severityType,
-                            skipFail, skipDbUpdate, ignorePackageNames, ignoreCves);
+                    installBinary.installJacked(jenkinsConfig, jackedConfig);
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
-
                 }
             }
         } else {
-            compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                    skipDbUpdate, ignorePackageNames, ignoreCves);
+            Compile compileArgs = new Compile();
+            compileArgs.compileArgs(jenkinsConfig, jackedConfig);
         }
     }
 
-    public static void compileArgs(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-            String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
-            throws InterruptedException, IOException {
-
-        // Modify Jacked command with argument
-        if (scanName != null && !scanName.equals("")) {
-
-            // Determine the Arguments
-            String[] cmdArgs = SetArgs.scanTypeArgs(scanType, severityType, scanName, skipDbUpdate, ignorePackageNames, ignoreCves);
-            ExecuteBinary.executeJacked(cmdArgs, workspace, launcher, listener, skipFail);
-        } else {
-            listener.getLogger().println("Please input your scan name");
-        }
-    }
-
-    public static String time() {
-        Date currentDate = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("MMddyyyyHHmm");
-        String timestamp = formatter.format(currentDate);
-
-        return timestamp;
-
-    }
-
+    /**
+     * Pipeline and Buildstep Setup
+     */
     @Symbol("jacked")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -213,7 +148,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return "Vulnerability scan with jacked";
         }
 
-
+        /**
+         * Select Option for Fail-criteria.
+         * @return
+         * @throws AccessDeniedException
+         */
         @POST
         public ListBoxModel doFillSeverityTypeItems() throws AccessDeniedException {
             // Check if the user has the necessary permission
@@ -221,10 +160,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             if (!jenkins.hasPermission(Permission.CONFIGURE)) {
                 throw new AccessDeniedException("Insufficient permissions");
             }
-
-            // Execute the operation
-            LOGGER.log(Level.INFO, "doFillSeverityTypeItems() called");
-            ListBoxModel items = new ListBoxModel(
+            return new ListBoxModel(
                     new Option("-- Select --", ""),
                     new Option("Critical", "critical"),
                     new Option("High", "high"),
@@ -232,10 +168,13 @@ public class Jacked extends Builder implements SimpleBuildStep {
                     new Option("Low", "low"),
                     new Option("Negligible", "negligible"),
                     new Option("Unknown", "unknown"));
-            LOGGER.log(Level.INFO, "Returning ListBoxModel: {0}", items);
-            return items;
         }
 
+        /**
+         * Select option for Scan Type.
+         * @return
+         * @throws AccessDeniedException
+         */
         @POST
         public ListBoxModel doFillScanTypeItems() throws AccessDeniedException {
             // Check if the user has the necessary permission
@@ -243,24 +182,17 @@ public class Jacked extends Builder implements SimpleBuildStep {
             if (!jenkins.hasPermission(Permission.CONFIGURE)) {
                 throw new AccessDeniedException("Insufficient permissions");
             }
-
-            // Execute the operation
-            LOGGER.log(Level.INFO, "doFillScanTypeItems() called");
-            ListBoxModel items = new ListBoxModel(
+            return new ListBoxModel(
                     new Option("-- Select --", ""),
                     new Option("Image", "image"),
                     new Option("Directory", "directory"),
                     new Option("Tar File", "tar"),
                     new Option("SBOM File", "sbom"));
-            LOGGER.log(Level.INFO, "Returning ListBoxModel: {0}", items);
-            return items;
         }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
-
     }
-
 }

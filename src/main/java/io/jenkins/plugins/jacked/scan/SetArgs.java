@@ -2,6 +2,7 @@ package io.jenkins.plugins.jacked.scan;
 
 import java.util.ArrayList;
 
+import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.save.FileFormat;
 
@@ -18,40 +19,40 @@ public class SetArgs {
     private static final String IGNOREVULNCVES = "--ignore-cves";
 
             
-    public static String[] scanTypeArgs(String scanType, String severityType, String scanName,
-            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves) {
-        String osName = CheckOS.osName();
+    public String[] scanTypeArgs(JackedConfig jackedConfig) {
+        CheckOS checkOS = new CheckOS();
+        String osName = checkOS.osName();
 
-        if (Boolean.FALSE.equals(CheckOS.isWindows(osName))) {
+        if (Boolean.FALSE.equals(checkOS.isWindows(osName))) {
             JACKED = "./jackedTmpDir/bin/jacked";
         }
 
         ArrayList<String> cmdArgs = new ArrayList<String>();
 
-        switch (scanType) {
+        switch (jackedConfig.getScanType()) {
             case "image":
                 // jacked <image> --fail-criteria <severityType>
-                String image = scanName;
+                String image = jackedConfig.getScanName();
                 cmdArgs.add(JACKED);
                 cmdArgs.add(image);
                 break;
             case "directory":
                 // jacked --dir <path> --fail-criteria <severityType>
-                String path = scanName;
+                String path = jackedConfig.getScanName();
                 cmdArgs.add(JACKED);
                 cmdArgs.add(DIR);
                 cmdArgs.add(path);
                 break;
             case "tar":
                 // jacked --dir <path> --fail-criteria <severityType>
-                String tarfile = scanName;
+                String tarfile = jackedConfig.getScanName();
                 cmdArgs.add(JACKED);
                 cmdArgs.add(TAR);
                 cmdArgs.add(tarfile);
                 break;
             case "sbom":
                 // jacked --dir <path> --fail-criteria <severityType>
-                String sbomjson = scanName;
+                String sbomjson = jackedConfig.getScanName();
                 cmdArgs.add(JACKED);
                 cmdArgs.add(SBOM);
                 cmdArgs.add(sbomjson);
@@ -60,29 +61,29 @@ public class SetArgs {
             default:
                 // jacked <image> --fail-criteria <severityType>
                 cmdArgs.add(JACKED);
-                cmdArgs.add(scanName);
+                cmdArgs.add(jackedConfig.getScanName());
                 break;
         }
         
         // Fail Criteria
         cmdArgs.add(FAILCRITERIA);
-        cmdArgs.add(severityType);
+        cmdArgs.add(jackedConfig.getSeverityType());
 
         // CI Mode Enable
         cmdArgs.add(CIMODE);
 
         // Skip DB Update Enable
-        if (Boolean.TRUE.equals(skipDbUpdate)) {
+        if (Boolean.TRUE.equals(jackedConfig.getSkipDbUpdate())) {
             cmdArgs.add(SKIPDBUPDATE);
         }
 
-        if (ignorePackageNames != null && (ignorePackageNames.length() > 0)) {
+        if (jackedConfig.getIgnorePackageNames() != null && (jackedConfig.getIgnorePackageNames().length() > 0)) {
                 cmdArgs.add(IGNOREPACKAGENAMES);
-                cmdArgs.add(ignorePackageNames);
+                cmdArgs.add(jackedConfig.getIgnorePackageNames());
         }
-        if (ignoreCves != null && (ignoreCves.length() > 0)) {
+        if (jackedConfig.getIgnoreCves() != null && (jackedConfig.getIgnoreCves().length() > 0)) {
                 cmdArgs.add(IGNOREVULNCVES);
-                cmdArgs.add(ignoreCves);
+                cmdArgs.add(jackedConfig.getIgnoreCves());
         }
 
         // Save output file

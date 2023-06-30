@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Windows {
 
-    public static boolean isJackedAvailableWindows() throws IOException, InterruptedException {
+    public boolean isJackedAvailableWindows() throws IOException, InterruptedException {
         String[] command = { "cmd", "/c", "where", "jacked" };
         Process process = new ProcessBuilder(command).start();
         int exitCode = process.waitFor();
