@@ -80,7 +80,7 @@ Default value is `false / unchecked`.
 <b>Warning:</b> If the value is checked, it will skip check database update while scanning.
 
 # Usage as Pipeline
-```sh
+```yaml
 pipeline {
     agent any
     stages {
