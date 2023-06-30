@@ -19,10 +19,10 @@ public class Compile {
      * Compile Arguments for Jacked Vulnerability Scanning.
      * Prepares the flags based on the user-input, compiles properly to be executed for scanning.
      * Inside of the method compiled arguments will be executed and build will failed if vulnerability found based on the fail-criteria input.
-     * @param jenkinsConfig for Jenkins Configuration tools.
-     * @param jackedConfig for Jacked Configuration user-inputs.
-     * @throws InterruptedException when a thread is waiting, sleeping, or otherwise occupied, and the thread is interrupted, either before or during the activity.
-     * @throws IOException signals that an I/O exception of some sort has occurred.
+     * param jenkinsConfig for Jenkins Configuration tools.
+     * param jackedConfig for Jacked Configuration user-inputs.
+     * throws InterruptedException when a thread is waiting, sleeping, or otherwise occupied, and the thread is interrupted, either before or during the activity.
+     * throws IOException signals that an I/O exception of some sort has occurred.
      */
     public void compileArgs(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
             throws InterruptedException, IOException {
@@ -53,9 +53,9 @@ public class Compile {
      * Build Fail Filter
      * Determines based on the result / assessment of the Vulnerability Scanner Jacked.
      * Throws AbortException when failed that causes the build to fail.
-     * @param buildStatus get the status of the current build.
-     * @param listener handles logs.
-     * @throws AbortException causes of build fail.
+     * param buildStatus get the status of the current build.
+     * param listener handles logs.
+     * throws AbortException causes of build fail.
      */
     public void buildFailFilter(String buildStatus, TaskListener listener) throws AbortException {
         if ("failed".equals(buildStatus)) {
@@ -82,9 +82,9 @@ public class Compile {
     
     /**
      * Generate Content and Save a JSON File
-     * @param jenkinsConfig for Jenkins Configuration tools
-     * @param jackedConfig for Jacked Configuration user-inputs.
-     * @throws IOException Signals that an I/O exception of some sort has occurred. 
+     * param jenkinsConfig for Jenkins Configuration tools
+     * param jackedConfig for Jacked Configuration user-inputs.
+     * throws IOException Signals that an I/O exception of some sort has occurred. 
      */
     public void generateJSON(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws IOException {
         JSONObject json = new JSONObject();
