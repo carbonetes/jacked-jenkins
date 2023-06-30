@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class CheckVersion {
 
-    public static String getVersion() {
+    public String getVersion() {
         String repositoryUrl = "https://github.com/carbonetes/jacked";
         try {
             String latestVersion = getLatestVersion(repositoryUrl);

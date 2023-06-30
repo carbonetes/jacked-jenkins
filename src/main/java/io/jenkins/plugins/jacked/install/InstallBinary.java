@@ -4,21 +4,19 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.TaskListener;
-import io.jenkins.plugins.jacked.Jacked;
+import io.jenkins.plugins.jacked.binary.Compile;
+import io.jenkins.plugins.jacked.model.JackedConfig;
+import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
 public class InstallBinary {
 
-    public static void installJacked(FilePath workspace, Launcher launcher, TaskListener listener, EnvVars env,
-            String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
+    public void installJacked(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
             throws InterruptedException, IOException, URISyntaxException {
         // Create a temporary directory inside the workspace to store the downloaded
         // files
-        FilePath jackedTmpDir = workspace.child("jackedTmpDir");
+        FilePath jackedTmpDir = jenkinsConfig.getWorkspace().child("jackedTmpDir");
         jackedTmpDir.mkdirs();
 
         // Download the install script
@@ -31,50 +29,50 @@ public class InstallBinary {
 
         // Launch the install script with custom options using sh
         String[] shCmd = { "bash", "install.sh", "|", "sh", "-s", "--", "-d", destDir.getRemote() };
-        Launcher.ProcStarter procStarter = launcher.launch()
+        Launcher.ProcStarter procStarter = jenkinsConfig.getLauncher().launch()
                 .cmds(shCmd)
-                .envs(env).pwd(jackedTmpDir).stdin(null).stdout(listener).stderr(listener.getLogger());
+                .envs(jenkinsConfig.getEnv())
+                .pwd(jackedTmpDir)
+                .stdin(null)
+                .stdout(jenkinsConfig.getListener())
+                .stderr(jenkinsConfig.getListener().getLogger());
         int ret = procStarter.start().join();
 
         // Check if the installation was successful and print a message to the listener
         if (ret == 0) {
-            listener.getLogger().println("Jacked Installed Successfully");
-            setPath(workspace, launcher, listener, env, scanName, scanType, severityType, skipFail,
-                    skipDbUpdate, ignorePackageNames, ignoreCves);
-
+            jenkinsConfig.getListener().getLogger().println("Jacked Installed Successfully");
+            setPath(jenkinsConfig, jackedConfig);
         } else {
-            listener.getLogger().println("Installation failed - error code: " + ret);
+            jenkinsConfig.getListener().getLogger().println("Installation failed - error code: " + ret);
         }
     }
 
-    public static void setPath(FilePath workspace, Launcher launcher, TaskListener listener,
-            EnvVars env, String scanName, String scanType, String severityType, Boolean skipFail,
-            Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
+    public void setPath(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
             throws IOException, InterruptedException {
 
-        FilePath jackedExecutable = workspace.child("jackedTmpDir");
+        FilePath jackedExecutable = jenkinsConfig.getWorkspace().child("jackedTmpDir");
         String jackedExecutablePath = jackedExecutable.getRemote();
-        listener.getLogger().println(jackedExecutablePath);
+        jenkinsConfig.getListener().getLogger().println(jackedExecutablePath);
         String binPath = "/bin";
 
         String[] cmd = new String[] { "sh", "-c",
                 "export PATH=\"" + jackedExecutablePath + binPath + ":$PATH && jacked\"" };
-        Launcher.ProcStarter proc = launcher.launch()
+        Launcher.ProcStarter proc = jenkinsConfig.getLauncher().launch()
                 .cmds(cmd)
-                .envs(env)
-                .pwd(workspace.getRemote())
+                .envs(jenkinsConfig.getEnv())
+                .pwd(jenkinsConfig.getWorkspace().getRemote())
                 .stdin(null)
-                .stdout(listener)
-                .stderr(listener.getLogger());
+                .stdout(jenkinsConfig.getListener())
+                .stderr(jenkinsConfig.getListener().getLogger());
         int procCode = proc.join();
         if (procCode != 0) {
-            listener.getLogger().println("Failed to set PATH environment variable - error code: " + procCode);
+            jenkinsConfig.getListener().getLogger().println("Failed to set PATH environment variable - error code: " + procCode);
         } else {
-            listener.getLogger().println("PATH environment variable has been updated successfully.");
+            jenkinsConfig.getListener().getLogger().println("PATH environment variable has been updated successfully.");
 
-            // Compile Arguments for scanning.
-            Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
-                    skipFail, skipDbUpdate, ignorePackageNames, ignoreCves);
+            // Update the compile arguments for scanning from the jackedConfig instance variable
+            Compile compile = new Compile();
+            compile.compileArgs(jenkinsConfig, jackedConfig);
         }
     }
 

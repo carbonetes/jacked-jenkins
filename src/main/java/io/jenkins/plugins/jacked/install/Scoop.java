@@ -2,109 +2,92 @@ package io.jenkins.plugins.jacked.install;
 
 import java.io.IOException;
 
-import hudson.EnvVars;
-import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.TaskListener;
-import io.jenkins.plugins.jacked.Jacked;
+import io.jenkins.plugins.jacked.binary.Compile;
+import io.jenkins.plugins.jacked.model.JackedConfig;
+import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
 public class Scoop {
 
-        // Check Scoop
-        public static void checkScoop(FilePath workspace, EnvVars env, Launcher launcher,
-                        TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean skipFail,
-                        Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
-                        throws IOException, InterruptedException {
+    // Check Scoop
+    public void checkScoop(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws IOException, InterruptedException {
 
-                String[] checkScoop = { "powershell.exe", "scoop -v" };
-                Launcher.ProcStarter checkScoopProcStarter = launcher.launch()
-                                .cmds(checkScoop)
-                                .envs(env).pwd(workspace).stdin(null).stdout(listener).stderr(listener.getLogger());
-                int checkScoopRet = checkScoopProcStarter.start().join();
+            String[] checkScoop = { "powershell.exe", "scoop -v" };
+            Launcher.ProcStarter checkScoopProcStarter = jenkinsConfig.getLauncher().launch()
+                            .cmds(checkScoop)
+                            .envs(jenkinsConfig.getEnv())
+                            .pwd(jenkinsConfig.getWorkspace())
+                            .stdin(null).stdout(jenkinsConfig.getListener())
+                            .stderr(jenkinsConfig.getListener().getLogger());
 
-                if (checkScoopRet != 0) {
-                        listener.getLogger().println("Scoop is not installed.");
-                        listener.getLogger().println("Preparing to install scoop...");
-                        installScoop(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                                        skipDbUpdate, ignorePackageNames, ignoreCves);
-                } else {
-                        listener.getLogger().println("Preparing to install jacked via scoop...");
-                        installJacked(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                                        skipDbUpdate, ignorePackageNames, ignoreCves);
-                }
-        }
+            int checkScoopRet = checkScoopProcStarter.start().join();
+        
+            if (checkScoopRet != 0) {
+                    jenkinsConfig.getListener().getLogger().println("Scoop is not installed.");
+                    jenkinsConfig.getListener().getLogger().println("Preparing to install scoop...");
+                    installScoop(jenkinsConfig, jackedConfig);
+            } else {
+                    jenkinsConfig.getListener().getLogger().println("Preparing to install jacked via scoop...");
+                    installJacked(jenkinsConfig, jackedConfig);
+            }
+    }
 
-        // Scoop Install
-        public static void installScoop(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean skipFail,
-                        Boolean skipDbUpdate, String ignorePackageNames,
-                        String ignoreCves)
-                        throws IOException, InterruptedException {
+    // Scoop Install
+    public void installScoop(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
+                    throws IOException, InterruptedException {
 
-                listener.getLogger().println("Installing Scoop...");
-                Process process = new ProcessBuilder("powershell.exe",
-                                "Set-ExecutionPolicy RemoteSigned -scope CurrentUser; iwr -useb get.scoop.sh | iex")
-                                .redirectErrorStream(true)
-                                .start();
-                process.waitFor();
-                listener.getLogger().println("Scoop installation finished");
-                installJacked(workspace, env, launcher, listener, scanName, scanType, severityType, skipFail,
-                                skipDbUpdate, ignorePackageNames, ignoreCves);
+            jenkinsConfig.getListener().getLogger().println("Installing Scoop...");
+            Process process = new ProcessBuilder("powershell.exe",
+                            "Set-ExecutionPolicy RemoteSigned -scope CurrentUser; iwr -useb get.scoop.sh | iex")
+                            .redirectErrorStream(true)
+                            .start();
+            process.waitFor();
+            jenkinsConfig.getListener().getLogger().println("Scoop installation finished");
+            installJacked(jenkinsConfig, jackedConfig);
 
-        }
+    }
 
-        // Scoop Install Jacked
-        public static void installJacked(FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener,
-                        String scanName, String scanType, String severityType, Boolean skipFail,
-                        Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves)
-                        throws IOException, InterruptedException {
+    // Scoop Install Jacked
+    public void installJacked(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
+                    throws IOException, InterruptedException {
 
-                // Clean up jacked bucket
-                String[] bucket = { "powershell", "scoop bucket rm jacked" };
-                cleanUpJacked(bucket, workspace, env, launcher, listener);
-                String[] app = { "powershell", "scoop uninstall jacked" };
-                cleanUpJacked(app, workspace, env, launcher, listener);
+            // Clean up jacked bucket
+            String[] bucket = { "powershell", "scoop bucket rm jacked" };
+            procCommand(bucket, jenkinsConfig);
+            String[] app = { "powershell", "scoop uninstall jacked" };
+            procCommand(app, jenkinsConfig);
 
-                listener.getLogger().println("Preparing to install jacked via scoop...");
+            jenkinsConfig.getListener().getLogger().println("Preparing to install jacked via scoop...");
 
-                // Add Jacked bucket to Scoop
-                String[] addBucket = { "powershell",
-                                "scoop bucket add jacked https://github.com/carbonetes/jacked-bucket" };
-                procCommand(addBucket, workspace, env, launcher, listener);
-                // Install/Update Jacked using Scoop
-                String[] installJacked = { "powershell", "scoop install jacked" };
-                procCommand(installJacked, workspace, env, launcher, listener);
+            // Add Jacked bucket to Scoop
+            String[] addBucket = { "powershell",
+                            "scoop bucket add jacked https://github.com/carbonetes/jacked-bucket" };
+            procCommand(addBucket, jenkinsConfig);
+            // Install/Update Jacked using Scoop
+            String[] installJacked = { "powershell", "scoop install jacked" };
+            procCommand(installJacked, jenkinsConfig);
 
-                listener.getLogger().println("Jacked Installed Successfully");
+            jenkinsConfig.getListener().getLogger().println("Jacked Installed Successfully");
 
-                // Start compiling arguments for scanning
-                Jacked.compileArgs(workspace, env, launcher, listener, scanName, scanType, severityType,
-                                skipFail, skipDbUpdate, ignorePackageNames, ignoreCves);
+            // Start compiling arguments for scanning
+            Compile compile = new Compile();
+            compile.compileArgs(jenkinsConfig, jackedConfig);
 
-        }
+    }
 
-        public static void procCommand(String[] args, FilePath workspace, EnvVars env, Launcher launcher,
-                        TaskListener listener) throws IOException, InterruptedException {
+    public void procCommand(String[] args, JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
 
-                Launcher.ProcStarter proc = launcher.launch()
-                                .cmds(args)
-                                .envs(env).pwd(workspace).stdin(null).stdout(listener).stderr(listener.getLogger());
-                int procCode = proc.join();
-                if (procCode != 0) {
-                        listener.getLogger()
-                                        .println("Failed to execute command - error code: " + procCode);
-                        return;
-                }
-        }
-
-        public static void cleanUpJacked(String[] args, FilePath workspace, EnvVars env, Launcher launcher,
-                        TaskListener listener) throws IOException, InterruptedException {
-                Launcher.ProcStarter cleanBucket = launcher.launch()
-                                .cmds(args)
-                                .envs(env).pwd(workspace).stdin(null).stdout(listener).stderr(listener.getLogger());
-                cleanBucket.join();
-
-        }
+            Launcher.ProcStarter proc = jenkinsConfig.getLauncher().launch()
+                            .cmds(args)
+                            .envs(jenkinsConfig.getEnv())
+                            .pwd(jenkinsConfig.getWorkspace())
+                            .stdin(null)
+                            .stdout(jenkinsConfig.getListener())
+                            .stderr(jenkinsConfig.getListener().getLogger());
+            int procCode = proc.join();
+            if (procCode != 0) {
+                    jenkinsConfig.getListener().getLogger().println("Failed to execute command - error code: " + procCode);
+            }
+    }
 
 }

@@ -8,13 +8,11 @@ import java.nio.charset.StandardCharsets;
 import hudson.FilePath;
 
 public class JackedExist {
-    private JackedExist() {
-        throw new IllegalStateException("Utility class");
-    }
 
-    public static Boolean checkIfExists(FilePath workspace) {
+    public Boolean checkIfExists(FilePath workspace) {
+        CheckVersion checkVersion = new CheckVersion();
         String workspacePath = workspace.getRemote();
-        String version = CheckVersion.getVersion();
+        String version = checkVersion.getVersion();
         String fileName = "jacked" + version + "Exist.txt";
         String fileContent = "Jacked" + version + " installed on this workspace";
 
@@ -34,7 +32,7 @@ public class JackedExist {
         }
     }
 
-    private static Boolean checkFileExists(String workspacePath, String fileName) {
+    private Boolean checkFileExists(String workspacePath, String fileName) {
         File file = new File(workspacePath, fileName);
         return file.exists() && !file.isDirectory();
     }
