@@ -70,7 +70,7 @@ public class Compile {
             status = buildStatus;
         }
         Map<String, String> keyValuePair = new HashMap<>();
-        keyValuePair.put("buildStatus", status);
+        keyValuePair.put("build_status", status);
         keyValuePair.put("jacked_assessment", status);
         keyValuePair.put("scan_type", jackedConfig.getScanType());
         keyValuePair.put("scan_name", jackedConfig.getScanName());
