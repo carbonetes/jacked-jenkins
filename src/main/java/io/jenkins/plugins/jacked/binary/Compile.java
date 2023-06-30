@@ -37,7 +37,7 @@ public class Compile {
 
             // Set Build Status as content of JSON File.
             String buildStatus = jackedExecute.getBuildStatus();
-            setBuildStatusContent(buildStatus, jackedConfig);
+            setBuildStatusContent(buildStatus, jackedConfig, jackedExecute.getAssessmentSummary());
             // Save JSON File and its content.
             generateJSON(jenkinsConfig, jackedConfig);
             // Determines if build will failed.
@@ -64,7 +64,7 @@ public class Compile {
     }
 
     // Set Build Status as content of JSON File
-    public void setBuildStatusContent(String buildStatus, JackedConfig jackedConfig) {
+    public void setBuildStatusContent(String buildStatus, JackedConfig jackedConfig, String assessmentSummary) {
         String status = "success";
         if (Boolean.FALSE.equals(jackedConfig.getSkipFail())) {
             status = buildStatus;
@@ -72,6 +72,7 @@ public class Compile {
         Map<String, String> keyValuePair = new HashMap<>();
         keyValuePair.put("buildStatus", status);
         keyValuePair.put("jackedAssessment", status);
+        keyValuePair.put("assessmentSummary", assessmentSummary);
         keyValuePair.put("scanType", jackedConfig.getScanType());
         keyValuePair.put("scanName", jackedConfig.getScanName());
 

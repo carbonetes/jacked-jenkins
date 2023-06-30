@@ -11,7 +11,8 @@ public class ExecuteBinary {
 
     public ExecuteJacked executeJacked(String[] cmd, JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws InterruptedException, IOException {
 
-        String buildStatus;
+        String buildStatus = null;
+        String assessmentSummary = null;
 
         ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
         ByteArrayOutputStream stderrStream = new ByteArrayOutputStream();
@@ -28,13 +29,35 @@ public class ExecuteBinary {
         jenkinsConfig.getListener().getLogger().println(stdout);
         jenkinsConfig.getListener().getLogger().println(stderr);
 
-         if (Boolean.FALSE.equals(jackedConfig.getSkipFail()) &&  (stdout.contains("failed") || stderr.contains("failed") || stdout.contains("Error")
-                    || stderr.contains("Error"))) {
+        // Extract the line containing 'failed'
+        if (Boolean.FALSE.equals(jackedConfig.getSkipFail()) && (stdout.toLowerCase().contains("failed") || stderr.toLowerCase().contains("failed") || stdout.toLowerCase().contains("error") || stderr.toLowerCase().contains("error"))) {
             buildStatus = "failed";
+
+            String[] lines = stdout.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.toLowerCase().contains("failed")) {
+                    assessmentSummary = line.trim();
+                    break;
+                }
+            }
+
+            if (assessmentSummary == null) {
+                lines = stderr.split("\\r?\\n");
+                for (String line : lines) {
+                    if (line.toLowerCase().contains("failed")) {
+                        assessmentSummary = line.trim();
+                        break;
+                    }
+                }
+            }
         } else {
             buildStatus = "success";
         }
-        return new ExecuteJacked(ret, buildStatus);
+
+
+
+
+        return new ExecuteJacked(ret, buildStatus, assessmentSummary);
     }
 
 }
