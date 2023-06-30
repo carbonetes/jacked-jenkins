@@ -84,15 +84,11 @@ public class Jacked extends Builder implements SimpleBuildStep {
         installJacked(jenkinsConfig);
     }
     
-    /**
-     * Check OS and Install Jacked
-     * Performs installation / update process of Jacked Binary inside the workspace based on the operating system.
-     * If has the updated version of the binary, installation / update process will be skipped.
-     * Unix / Windows
-     * param jenkinsConfig the Jenkins configuration tools.
-     * param jackedConfig the Jacked configuration user-inputs.
-     * throws IOException if an I/O error occurs.
-     * throws InterruptedException if the operation is interrupted.
+    /* 
+     Check OS and Install Jacked
+     Performs installation / update process of Jacked Binary inside the workspace based on the operating system.
+     If has the updated version of the binary, installation / update process will be skipped.
+     Unix / Windows
      */
     public void installJacked(JenkinsConfig jenkinsConfig)
             throws IOException, InterruptedException {
@@ -102,10 +98,10 @@ public class Jacked extends Builder implements SimpleBuildStep {
         Scoop scoop = new Scoop();
         InstallBinary installBinary = new InstallBinary();
         JackedExist jackedExist = new JackedExist();
-
+    
         String osName = checkOS.osName();
         jenkinsConfig.getListener().getLogger().println("Jacked Plugin - Running on: " + osName);
-
+    
         if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
             if (Boolean.TRUE.equals(checkOS.isWindows(osName))) {
                 // Windows Installation Process
@@ -123,7 +119,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
             compileArgs.compileArgs(jenkinsConfig, jackedConfig);
         }
     }
-
+    
     /**
      * Pipeline and Buildstep Setup
      */
@@ -148,10 +144,10 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return "Vulnerability scan with jacked";
         }
 
-        /**
+        /*
          * Select Option for Fail-criteria.
-         * return ListBoxModel for Severity Type.
-         * throws AccessDeniedException validate user permissions.
+         * @return ListBoxModel for Severity Type.
+         * @throws AccessDeniedException validate user permissions.
          */
         @POST
         public ListBoxModel doFillSeverityTypeItems() throws AccessDeniedException {
@@ -170,10 +166,10 @@ public class Jacked extends Builder implements SimpleBuildStep {
                     new Option("Unknown", "unknown"));
         }
 
-        /**
+        /*
          * Select option for Scan Type.
-         * return ListBoxModel for Scan Type.
-         * throws AccessDeniedException checked exception thrown when a file system operation is denied, typically due to a file permission or other access check..
+         * @return ListBoxModel for Scan Type.
+         * @throws AccessDeniedException checked exception thrown when a file system operation is denied, typically due to a file permission or other access check..
          */
         @POST
         public ListBoxModel doFillScanTypeItems() throws AccessDeniedException {
