@@ -101,7 +101,7 @@ pipeline {
     }
 }
 ```
-## Pipeline Usage: Accessing Stored Values for Your Environment Variable Usage.
+## Pipeline Usage Guide: Accessing Stored Values for Your Environment Variable Usage.
 Welcome to this guide on accessing stored values for your environment variable usage. In this document, we will explore how you can retrieve and utilize stored values effectively in your environment variables within your applications or scripts.
 
 ### Why Environment Variables?
@@ -121,7 +121,7 @@ Understanding how to access stored values for your environment variable usage is
 
 Now, let's dive into the details and learn how to effectively access stored values in your environment variables!
 
-## Pipeline Usage: Adding catchError() Block.
+## Pipeline Usage Guide: Adding catchError() Block.
 ```yaml
 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { // Jacked Scan script.. }
 ```
@@ -150,7 +150,7 @@ stage('Jacked Scan') {
 ```
 Once implemented we are now ready to add more stages based on your usage to our pipeline script.
 
-## Pipeline Usage: Adding Read JSON File Stage to Access Stored Values for Environment Variable Usage.
+## Pipeline Usage Guide: Adding Read JSON File Stage to Access Stored Values for Environment Variable Usage.
 In this pipeline script, we have included a stage called "Read JSON" to facilitate the extraction of stored values from a JSON file and utilize them as environment variables. This stage allows you to access multiple values from the JSON file and incorporate them into your pipeline's environment.
 <br><br>
 By using the readJSON step, we can retrieve various values from the JSON file and assign them to variables. In addition to the "buildStatus" value, we can also extract other key-value pairs such as "jackedAssessment," "scanType," and "scanName" from the JSON file.
@@ -230,7 +230,7 @@ pipeline {
     }
 }
 ```
-### LICENSE
+# LICENSE
 
 Licensed under MIT, see [LICENSE](LICENSE.md)
 
