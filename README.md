@@ -177,7 +177,7 @@ Once the values are extracted, we can echo them to provide visibility and confir
     // Display File Path
     echo "File path: ${env.WORKSPACE}/jacked_file.json"
 ```
-### Accessing JSON Stored KeyValuePairs for Environment Variables.
+### Accessing JSON Stored Key-value Pairs for Environment Variables.
 ```yaml
 stage('Read JSON') {
     steps {
@@ -263,6 +263,16 @@ pipeline {
             echo "Build Status: ${env.BUILD_STATUS}"
         }
     }
+}
+```
+## Here's a sample of the stored values inside a JSON file named `jacked_file.json` that is generated inside your workspace.
+```yaml
+{
+    "scanName":"ubuntu",
+    "jackedAssessment":"failed",
+    "assessmentSummary":"Failed:     6 out of 10 found vulnerabilities failed the assessment",
+    "scanType":"image",
+    "buildStatus":"failed"
 }
 ```
 # LICENSE
