@@ -265,7 +265,7 @@ pipeline {
     }
 }
 ```
-## Here's a sample of the stored values inside a JSON file named `jacked_file.json` that is generated inside your workspace.
+### Here's a sample of the stored values inside a JSON file named `jacked_file.json` that is generated inside your workspace.
 ```yaml
 {
     "scanName":"ubuntu",
