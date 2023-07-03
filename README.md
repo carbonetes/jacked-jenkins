@@ -148,7 +148,7 @@ stage('Jacked Scan') {
 }
 ```
 Once implemented we are now ready to add more stages based on your usage to our pipeline script.
-<be>
+<br>
 ## Pipeline Usage Guide: Adding Read JSON File Stage to Access Stored Values for Environment Variable Usage.
 ### `NOTE: Prerequisite Plugin:` Pipeline Utility Steps 2.15.4 or higher to access `readJSON`
 In this pipeline script, we have included a stage called "Read JSON" to facilitate the extraction of stored values from a JSON file and utilize them as environment variables. This stage allows you to access multiple values from the JSON file and incorporate them into your pipeline's environment.
