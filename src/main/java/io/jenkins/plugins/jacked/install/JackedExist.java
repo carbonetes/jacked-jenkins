@@ -19,7 +19,7 @@ public class JackedExist {
         Boolean fileExists = checkFileExists(workspacePath, fileName);
         if (Boolean.FALSE.equals(fileExists)) {
             try {
-                String filePath = workspacePath + "/" + fileName;
+                String filePath = workspacePath + File.separator + fileName;
                 try (FileWriter writer = new FileWriter(filePath, StandardCharsets.UTF_8)) {
                     writer.write(fileContent);
                 }
