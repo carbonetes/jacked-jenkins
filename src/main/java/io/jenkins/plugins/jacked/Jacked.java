@@ -94,16 +94,15 @@ public class Jacked extends Builder implements SimpleBuildStep {
             throws IOException, InterruptedException {
         
         // Call instance method.
-        CheckOS checkOS = new CheckOS();
         Scoop scoop = new Scoop();
         InstallBinary installBinary = new InstallBinary();
         JackedExist jackedExist = new JackedExist();
     
-        String osName = checkOS.osName();
+        String osName = CheckOS.osName();
         jenkinsConfig.getListener().getLogger().println("Jacked Plugin - Running on: " + osName);
     
         if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
-            if (Boolean.TRUE.equals(checkOS.isWindows(osName))) {
+            if (Boolean.TRUE.equals(CheckOS.isWindows(osName))) {
                 // Windows Installation Process
                 scoop.checkScoop(jenkinsConfig, jackedConfig);
             } else {

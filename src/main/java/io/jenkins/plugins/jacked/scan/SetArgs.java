@@ -20,10 +20,9 @@ public class SetArgs {
 
             
     public String[] scanTypeArgs(JackedConfig jackedConfig) {
-        CheckOS checkOS = new CheckOS();
-        String osName = checkOS.osName();
+        String osName = CheckOS.osName();
 
-        if (Boolean.FALSE.equals(checkOS.isWindows(osName))) {
+        if (Boolean.FALSE.equals(CheckOS.isWindows(osName))) {
             JACKED = "./jackedTmpDir/bin/jacked";
         }
 
