@@ -35,7 +35,7 @@ Provides the following:
 - `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
 - Assessment Result: Pass or Fail based on the selected fail criteria severity type.
 - Saves output file on the workspace in every build. `jacked_result_$(JOBNAME)_$(BUILDNUMBER).txt`
-- Saves Stored Values JSON File for Environment Variables. `jacked_file.json`
+- Saves Stored Values JSON File for Environment Variables. `jackedTmpDir/jacked_file.json`
 
 # Plugin Configuration Fields and Descriptions
 ## Scan Type
@@ -155,12 +155,24 @@ In this pipeline script, we have included a stage called "Read JSON" to facilita
 <br><br>
 By using the readJSON step, we can retrieve various values from the JSON file and assign them to variables. In addition to the "buildStatus" value, we can also extract other key-value pairs such as "jackedAssessment,", "assessmentSummary" "scanType," and "scanName" from the JSON file.
 ```yaml
-    def json = readJSON file: 'jacked_file.json'
+    def jackedFilePath = "${env.WORKSPACE}/jackedTmpDir/jacked_file.json"
+    def json = readJSON file: jackedFilePath
     def jackedAssessment = json.jackedAssessment
     def assessmentSummary = json.assessmentSummary
     def scanType = json.scanType
     def scanName = json.scanName
     def buildStatus = json.buildStatus
+
+    // Optional: Display Value, File Path
+    echo "Build Status: ${buildStatus}"
+    echo "File path: ${jackedFilePath}"
+
+    // Set the value as a global environment variable
+    env.BUILD_STATUS = buildStatus
+    env.jackedAssessment = jackedAssessment
+    env.assessmentSummary = assessmentSummary
+    env.scanType = scanType
+    env.scanName = scanName
 ```
 
 Once the values are extracted, we can echo them to provide visibility and confirmation of the retrieved data. Furthermore, these values can be set as global environment variables, allowing you to utilize them across different stages or post-processing actions within your pipeline.
@@ -176,19 +188,25 @@ Once the values are extracted, we can echo them to provide visibility and confir
     echo "Build Status: ${buildStatus}"
 
     // Display File Path
-    echo "File path: ${env.WORKSPACE}/jacked_file.json"
+    def jackedFilePath = "${env.WORKSPACE}/jackedTmpDir/jacked_file.json"
+    echo "File path: ${jackedFilePath}"
 ```
 ### Accessing JSON Stored Key-value Pairs for Environment Variables.
 ```yaml
 stage('Read JSON') {
     steps {
         script {
-            def json = readJSON file: 'jacked_file.json'
+            def jackedFilePath = "${env.WORKSPACE}/jackedTmpDir/jacked_file.json"
+            def json = readJSON file: jackedFilePath
             def jackedAssessment = json.jackedAssessment
             def assessmentSummary = json.assessmentSummary
             def scanType = json.scanType
             def scanName = json.scanName
             def buildStatus = json.buildStatus
+
+            // Optional: Display Value, File Path
+            echo "Build Status: ${buildStatus}"
+            echo "File path: ${jackedFilePath}"
 
             // Set the value as a global environment variable
             env.BUILD_STATUS = buildStatus
@@ -196,10 +214,6 @@ stage('Read JSON') {
             env.assessmentSummary = assessmentSummary
             env.scanType = scanType
             env.scanName = scanName
-
-            // Optional: Display Value, File Path
-            echo "Build Status: ${buildStatus}"
-            echo "File path: ${env.WORKSPACE}/jacked_file.json"
         }
     }
 }
@@ -232,12 +246,17 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     script {
-                        def json = readJSON file: 'jacked_file.json'
+                        def jackedFilePath = "${env.WORKSPACE}/jackedTmpDir/jacked_file.json"
+                        def json = readJSON file: jackedFilePath
                         def jackedAssessment = json.jackedAssessment
                         def assessmentSummary = json.assessmentSummary
                         def scanType = json.scanType
                         def scanName = json.scanName
                         def buildStatus = json.buildStatus
+
+                        // Optional: Display Value, File Path
+                        echo "Build Status: ${buildStatus}"
+                        echo "File path: ${jackedFilePath}"
 
                         // Set the value as a global environment variable
                         env.BUILD_STATUS = buildStatus
@@ -245,10 +264,6 @@ pipeline {
                         env.assessmentSummary = assessmentSummary
                         env.scanType = scanType
                         env.scanName = scanName
-
-                        // Optional: Display Value, File Path
-                        echo "Build Status: ${buildStatus}"
-                        echo "File path: ${env.WORKSPACE}/jacked_file.json"
                     }
                 }
             }
@@ -266,7 +281,7 @@ pipeline {
     }
 }
 ```
-### Here's a sample of the stored values inside a JSON file named `jacked_file.json` that is generated inside your workspace.
+### Here's a sample of the stored values inside a JSON file named `jacked_file.json` that is generated inside workspace directory name: `jackedTmpDir`.
 ```yaml
 {
     "scanName":"ubuntu",

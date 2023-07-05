@@ -1,12 +1,11 @@
 package io.jenkins.plugins.jacked.binary;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import hudson.AbortException;
+import hudson.FilePath;
 import hudson.model.TaskListener;
 import io.jenkins.plugins.jacked.model.ExecuteJacked;
 import io.jenkins.plugins.jacked.model.JackedConfig;
@@ -66,14 +65,18 @@ public class Compile {
 
     // Set Build Status as content of JSON File
     public void setBuildStatusContent(String buildStatus, JackedConfig jackedConfig, String assessmentSummary) {
-        String status = "success";
+        String status = "passed";
         if (Boolean.FALSE.equals(jackedConfig.getSkipFail())) {
             status = buildStatus;
         }
         Map<String, String> keyValuePair = new HashMap<>();
         keyValuePair.put("buildStatus", status);
         keyValuePair.put("jackedAssessment", status);
-        keyValuePair.put("assessmentSummary", assessmentSummary);
+        if (assessmentSummary != null) {
+            keyValuePair.put("assessmentSummary", assessmentSummary);
+        } else {
+            keyValuePair.put("assessmentSummary", status);
+        }
         keyValuePair.put("scanType", jackedConfig.getScanType());
         keyValuePair.put("scanName", jackedConfig.getScanName());
 
@@ -86,7 +89,7 @@ public class Compile {
      * @param jackedConfig for Jacked Configuration user-inputs.
      * @throws IOException Signals that an I/O exception of some sort has occurred. 
      */
-    public void generateJSON(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws IOException {
+    public void generateJSON(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws IOException, InterruptedException {
         JSONObject json = new JSONObject();
 
         // Put keyvalue pairs inside the json content.
@@ -97,19 +100,24 @@ public class Compile {
         }
 
         // JSON File Saving Setup
-        String fileName = "jacked_file.json";
-        String filePath = jenkinsConfig.getWorkspace().getRemote() + "/" + fileName;
+        FilePath jackedTmpDir = jenkinsConfig.getWorkspace().child("jackedTmpDir");
+        try {
+            jackedTmpDir.mkdirs();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8)) {
-            fileWriter.write(json.toString());
+        // Set the destination file path for jacked_file.json
+        FilePath destFile = jackedTmpDir.child("jacked_file.json");
+
+        try {
+            destFile.write(json.toString(), "UTF-8");
         } catch (IOException e) {
             // Handle the exception
             jenkinsConfig.getListener().getLogger().println("Failed to save JSON file: " + e.getMessage());
             throw e;
         }
-
-
-        jenkinsConfig.getEnv().put("JACKED_FILE_PATH", filePath);
 
     }
 }
