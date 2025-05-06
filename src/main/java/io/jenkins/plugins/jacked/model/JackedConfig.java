@@ -16,10 +16,20 @@ public class JackedConfig {
     private Boolean skipDbUpdate;
     private String ignorePackageNames;
     private String ignoreCves;
+    private String token;
     private Map<String, String> content;
-
     
-    public JackedConfig(String scanDest, String scanName, String severityType, String scanType, Boolean skipFail, Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves) {
+    public JackedConfig(
+        String scanDest, 
+        String scanName, 
+        String severityType, 
+        String scanType, 
+        Boolean skipFail, 
+        Boolean skipDbUpdate, 
+        String ignorePackageNames, 
+        String ignoreCves, 
+        String token
+    ){
         this.scanDest = scanDest;
         this.scanName = scanName;
         this.severityType = severityType;
@@ -28,5 +38,7 @@ public class JackedConfig {
         this.skipDbUpdate = skipDbUpdate;
         this.ignorePackageNames = ignorePackageNames;
         this.ignoreCves = ignoreCves;
+        this.token = token;
     }
+
 }

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.jacked.binary;
+package io.jenkins.plugins.jacked.compile;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.TaskListener;
+import io.jenkins.plugins.jacked.execute.ExecuteBinary;
 import io.jenkins.plugins.jacked.model.ExecuteJacked;
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
@@ -23,18 +24,23 @@ public class Compile {
      * @throws InterruptedException when a thread is waiting, sleeping, or otherwise occupied, and the thread is interrupted, either before or during the activity.
      * @throws IOException signals that an I/O exception of some sort has occurred.
      */
-    public void compileArgs(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
-            throws InterruptedException, IOException {
+    public void compileArgs(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig) throws InterruptedException, IOException {
+
+        TaskListener listener = jenkinsConfig.getListener();
+        listener.getLogger().println("Compilling Commands...");
 
         SetArgs setArgs = new SetArgs();
         ExecuteBinary executeBinary = new ExecuteBinary();
 
         if (jackedConfig.getScanName() != null && !jackedConfig.getScanName().equals("")) {
             // Compile arguments based on the user-inputs.
-            String[] cmdArgs = setArgs.scanTypeArgs(jackedConfig);
-            // Execute compiled arguments for Vulnerability Scanning and returns build status for Jenkins Build.
-            ExecuteJacked jackedExecute = executeBinary.executeJacked(cmdArgs, jenkinsConfig, jackedConfig);
+            String[] cmdArgs = setArgs.scanTypeArgs(jackedConfig, jenkinsConfig);
+           
 
+            // Execute compiled arguments for Vulnerability Scanning and returns build status for Jenkins Build.
+            
+            ExecuteJacked jackedExecute = executeBinary.executeJacked(cmdArgs, jenkinsConfig, jackedConfig);
+            
             // Set Build Status as content of JSON File.
             String buildStatus = jackedExecute.getBuildStatus();
             setBuildStatusContent(buildStatus, jackedConfig, jackedExecute.getAssessmentSummary());
@@ -42,6 +48,7 @@ public class Compile {
             generateJSON(jenkinsConfig, jackedConfig);
             // Determines if build will failed.
             buildFailFilter(buildStatus, jenkinsConfig.getListener());
+            
 
         } else {
             jenkinsConfig.getListener().getLogger().println("Please input your scan name");
