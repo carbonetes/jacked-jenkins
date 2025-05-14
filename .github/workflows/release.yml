@@ -3,7 +3,7 @@ name: Release Jenkins Plugin
 on:
   push:
     tags:
-      - 'v*.*.*'  # Triggers on version tags like v1.5.0
+      - '*.*.*' # Triggers on version tags like 1.5.0
 
 jobs:
   release:
