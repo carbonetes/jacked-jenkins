@@ -3,6 +3,7 @@ package io.jenkins.plugins.jacked.scan;
 import java.util.ArrayList;
 
 import io.jenkins.plugins.jacked.model.JackedConfig;
+import io.jenkins.plugins.jacked.model.JenkinsConfig;
 import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.save.FileFormat;
 
@@ -17,78 +18,78 @@ public class SetArgs {
     private static final String SKIPDBUPDATE = "--skip-db-update";
     private static final String IGNOREPACKAGENAMES = "--ignore-package-names";
     private static final String IGNOREVULNCVES = "--ignore-cves";
+    private static final String TOKEN = "--token";
+    private static final String PLUGIN = "--plugin";
 
-            
-    public String[] scanTypeArgs(JackedConfig jackedConfig) {
-        String osName = CheckOS.osName();
+    public String[] scanTypeArgs(JackedConfig jackedConfig, JenkinsConfig jenkinsConfig) {
+        ArrayList<String> cmdArgs = new ArrayList<>();
 
-        if (Boolean.FALSE.equals(CheckOS.isWindows(osName))) {
-            JACKED = "./jackedTmpDir/bin/jacked";
+        // Get the Go binary path from the JackedConfigscanTypeArgs(jackedConfig)
+        String workspaceDir = jenkinsConfig.getWorkspace().getRemote(); // /home/sairen/.jenkins/workspace/jacked pipeline
+        String goTmpDir = workspaceDir + "/go"; // Static folder for Go binary
+
+        String goBinaryPath = goTmpDir + "/bin/go";
+        // Ensure the Go binary path is valid
+        if (goBinaryPath == null || goBinaryPath.isEmpty()) {
+            throw new IllegalArgumentException("Go binary path is not set in JackedConfig.");
         }
 
-        ArrayList<String> cmdArgs = new ArrayList<String>();
+        // Add Go binary path to the command args
+        cmdArgs.add(goBinaryPath); // Add the dynamic Go path
+        cmdArgs.add("run");
+        cmdArgs.add(".");
 
+        // Scan type-specific arguments
         switch (jackedConfig.getScanType()) {
             case "image":
-                // jacked <image> --fail-criteria <severityType>
-                String image = jackedConfig.getScanName();
-                cmdArgs.add(JACKED);
-                cmdArgs.add(image);
+                cmdArgs.add(jackedConfig.getScanName());
                 break;
             case "directory":
-                // jacked --dir <path> --fail-criteria <severityType>
-                String path = jackedConfig.getScanName();
-                cmdArgs.add(JACKED);
                 cmdArgs.add(DIR);
-                cmdArgs.add(path);
+                cmdArgs.add(jackedConfig.getScanName());
                 break;
             case "tar":
-                // jacked --dir <path> --fail-criteria <severityType>
-                String tarfile = jackedConfig.getScanName();
-                cmdArgs.add(JACKED);
                 cmdArgs.add(TAR);
-                cmdArgs.add(tarfile);
+                cmdArgs.add(jackedConfig.getScanName());
                 break;
             case "sbom":
-                // jacked --dir <path> --fail-criteria <severityType>
-                String sbomjson = jackedConfig.getScanName();
-                cmdArgs.add(JACKED);
                 cmdArgs.add(SBOM);
-                cmdArgs.add(sbomjson);
+                cmdArgs.add(jackedConfig.getScanName());
                 break;
-
             default:
-                // jacked <image> --fail-criteria <severityType>
-                cmdArgs.add(JACKED);
                 cmdArgs.add(jackedConfig.getScanName());
                 break;
         }
-        
-        // Fail Criteria
+
+        // Add standard flags
+        cmdArgs.add(CIMODE);
         cmdArgs.add(FAILCRITERIA);
         cmdArgs.add(jackedConfig.getSeverityType());
 
-        // CI Mode Enable
-        cmdArgs.add(CIMODE);
+        cmdArgs.add(TOKEN);
+        cmdArgs.add(jackedConfig.getToken());
 
-        // Skip DB Update Enable
+        cmdArgs.add(PLUGIN);
+        cmdArgs.add("jenkins");
+
         if (Boolean.TRUE.equals(jackedConfig.getSkipDbUpdate())) {
             cmdArgs.add(SKIPDBUPDATE);
         }
 
-        if (jackedConfig.getIgnorePackageNames() != null && (jackedConfig.getIgnorePackageNames().length() > 0)) {
-                cmdArgs.add(IGNOREPACKAGENAMES);
-                cmdArgs.add(jackedConfig.getIgnorePackageNames());
-        }
-        if (jackedConfig.getIgnoreCves() != null && (jackedConfig.getIgnoreCves().length() > 0)) {
-                cmdArgs.add(IGNOREVULNCVES);
-                cmdArgs.add(jackedConfig.getIgnoreCves());
+        if (jackedConfig.getIgnorePackageNames() != null && !jackedConfig.getIgnorePackageNames().isEmpty()) {
+            cmdArgs.add(IGNOREPACKAGENAMES);
+            cmdArgs.add(jackedConfig.getIgnorePackageNames());
         }
 
-        // Save output file
+        if (jackedConfig.getIgnoreCves() != null && !jackedConfig.getIgnoreCves().isEmpty()) {
+            cmdArgs.add(IGNOREVULNCVES);
+            cmdArgs.add(jackedConfig.getIgnoreCves());
+        }
+
+        // Output file
         cmdArgs.add(FILE);
         cmdArgs.add(FileFormat.getFileName());
 
-        return cmdArgs.toArray(new String[cmdArgs.size()]);
+        return cmdArgs.toArray(new String[0]);
     }
 }

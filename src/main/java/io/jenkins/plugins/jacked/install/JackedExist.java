@@ -12,8 +12,8 @@ public class JackedExist {
     public Boolean checkIfExists(FilePath workspace) {
         CheckVersion checkVersion = new CheckVersion();
         String workspacePath = workspace.getRemote();
-        String version = checkVersion.getVersion();
-        String fileName = "jacked" + version + "Exist.txt";
+        String version = "v1.9.1-ci"; // checkVersion.getVersion();
+        String fileName = "jacked" + version + "-exist.txt";
         String fileContent = "Jacked" + version + " installed on this workspace";
 
         Boolean fileExists = checkFileExists(workspacePath, fileName);
