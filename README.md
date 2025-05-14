@@ -9,18 +9,15 @@
 ## Introduction
 <br>
 
-[Jacked](https://github.com/carbonetes/jacked) provides organizations with a more comprehensive look at their application to take calculated actions and create a better security approach. Its primary purpose is to scan vulnerabilities to implement subsequent risk mitigation measures.
+[Jacked](https://github.com/carbonetes/jacked) provides organizations with a comprehensive view of their applications to enable informed decision-making and improve security posture. Its primary purpose is to scan for vulnerabilities and guide mitigation efforts.
 
-This jenkins plugin scans a given target and expose vulnerability.
+This Jenkins plugin scans a specified target and exposes its vulnerabilities.
+
 
 ## Getting started
 
-This jenkins plugin installs jacked binary tool in the job workspace directory and performs scan. 
-## Auto-install & Update Binary [Jacked](https://github.com/carbonetes/jacked)
-The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)`
-- Auto-update: If checked, the binary will automatically update when a new release is available.
-- Uses Scoop for Windows
-- Uses Shell Script for Linux
+This Jenkins plugin installs Jacked in the job’s workspace and runs a scan.
+It automatically sets up all required dependencies to run Jacked.
 
 # Usage as add build step
 <img src="assets/add-build-step.png" alt="Jacked plugin" />
@@ -30,6 +27,8 @@ The plugin will install the "jacked" binary tool. `(Windows and Linux Supported)
 <img src="assets/configuration.png" alt="Jacked plugin configuration" />
 
 # Output
+<img src="assets/sample_fail_output.png" alt="Jacked plugin configuration" />
+
 Provides the following:
 - Show a list of packages.
 - `Analyzing BOM`: Showing vulnerabilities found and providing recommendations to fix them.
@@ -38,6 +37,8 @@ Provides the following:
 - Saves Stored Values JSON File for Environment Variables. `jackedTmpDir/jacked_file.json`
 
 # Plugin Configuration Fields and Descriptions
+## Token
+<b>Input: </b> Generated Personal Access Token from [Carbonetes](https://www.carbonetes.com/). Sign-up [here](https://app.carbonetes.com/register).
 ## Scan Type
 <b>Description: </b>Specified the input on scan field based on the selected scan type.
 <br>
@@ -86,6 +87,7 @@ pipeline {
         stage('Jacked Scan') {
             steps {
                 script {
+                    token: '', // Generated from https://app.carbonetes.com/
                     jacked scanType: 'image',           // Choose Scan Type: image, directory, tar, or sbom.
                     scanName: 'ubuntu',                 // Input: Image name, Directory path, tar file path, or sbom file path.
                     severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
@@ -134,6 +136,7 @@ stage('Jacked Scan') {
     steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { // Prevents other stages to be skipped when JACKED ASSESSMENT is failed
             script {
+                token: '', // Generated from https://app.carbonetes.com/
                 jacked scanType: 'images',          // Choose Scan Type: image, directory, tar, or sbom.
                 scanName: 'alpine',                 // Input: Image name, Directory path, tar file path, or sbom file path.
                 severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
@@ -230,6 +233,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     script {
+                        token: '', // Generated from https://app.carbonetes.com/
                         jacked scanType: 'image',       // Choose Scan Type: image, directory, tar, or sbom.
                         scanName: 'alpine',             // Input: Image name, Directory path, tar file path, or sbom file path.
                         severityType: 'high',           // Select a threshold that will fail the build when equal to or above the severity found in the results. 
@@ -238,6 +242,7 @@ pipeline {
                         skipDbUpdate: false,            // Default as false. Skip Database Update when scanning.
                         ignorePackageNames: '',         // Ignore Package names when scanning... e.g. input: dpkg,tar,bash,...
                         ignoreCves: ''                  // Ignore CVES when scanning... e.g. input: CVE-2022-1271,CVE-2022-3715,CVE-2022-1664,...
+                        
                     }
                 }
             }
