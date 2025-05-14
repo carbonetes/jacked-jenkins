@@ -10,7 +10,7 @@ import hudson.FilePath;
 public class JackedExist {
 
     public Boolean checkIfExists(FilePath workspace) {
-        CheckVersion checkVersion = new CheckVersion();
+        // CheckVersion checkVersion = new CheckVersion();
         String workspacePath = workspace.getRemote();
         String version = "v1.9.1-ci"; // checkVersion.getVersion();
         String fileName = "jacked" + version + "-exist.txt";

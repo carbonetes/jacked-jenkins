@@ -147,7 +147,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     */
 
     public void clone(JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
-
+        
         JackedExist jackedExist = new JackedExist();
         if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
             Clone.repo(jenkinsConfig);
