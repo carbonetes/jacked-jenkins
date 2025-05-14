@@ -6,7 +6,7 @@ import java.net.URL;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import io.jenkins.plugins.jacked.binary.Compile;
+import io.jenkins.plugins.jacked.compile.Compile;
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
 

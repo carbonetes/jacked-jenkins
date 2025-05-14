@@ -22,7 +22,9 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
-import io.jenkins.plugins.jacked.binary.Compile;
+import io.jenkins.plugins.jacked.compile.Compile;
+import io.jenkins.plugins.jacked.install.Clone;
+import io.jenkins.plugins.jacked.install.Go;
 import io.jenkins.plugins.jacked.install.InstallBinary;
 import io.jenkins.plugins.jacked.install.JackedExist;
 import io.jenkins.plugins.jacked.install.Scoop;
@@ -52,13 +54,27 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private Boolean skipDbUpdate;
     private String ignorePackageNames;
     private String ignoreCves;
+    private String token;
     private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
     @DataBoundConstructor
-    public Jacked(String scanDest, String scanName, String severityType,
-            String scanType, Boolean skipFail, Boolean skipDbUpdate, String ignorePackageNames, String ignoreCves, Map<String, String> content, JackedConfig jackedConfig) {
+    public Jacked(
+        String scanDest, 
+        String scanName, 
+        String severityType,
+        String scanType, 
+        Boolean skipFail, 
+        Boolean skipDbUpdate, 
+        String ignorePackageNames, 
+        String ignoreCves, 
+        String token,
+        Map<String, String> 
+        content, 
+        JackedConfig 
+        jackedConfig
+    ){
         this.scanDest = scanDest;
         this.scanName = scanName;
         this.severityType = severityType;
@@ -68,10 +84,18 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.ignorePackageNames = ignorePackageNames;
         this.ignoreCves = ignoreCves;
         this.content = content;
-        this.jackedConfig = new JackedConfig(scanDest, scanName, severityType, scanType, skipFail, skipDbUpdate,
-                ignorePackageNames, ignoreCves);
-
-        
+        this.token = token;
+        this.jackedConfig = new JackedConfig(
+            scanDest, 
+            scanName, 
+            severityType, 
+            scanType, 
+            skipFail, 
+            skipDbUpdate,
+            ignorePackageNames, 
+            ignoreCves,
+            token
+        );
     }
 
     @Override
@@ -81,7 +105,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
         // Initiate Jenkins and Input Config Model
         JenkinsConfig jenkinsConfig = new JenkinsConfig(run, workspace, env, launcher, listener);
         // Perform installation based on the OS
-        installJacked(jenkinsConfig);
+        // installJacked(jenkinsConfig);
+        clone(jenkinsConfig);
     }
     
     /* 
@@ -90,6 +115,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
      If has the updated version of the binary, installation / update process will be skipped.
      Unix / Windows
      */
+    /*
     public void installJacked(JenkinsConfig jenkinsConfig)
             throws IOException, InterruptedException {
         
@@ -118,7 +144,20 @@ public class Jacked extends Builder implements SimpleBuildStep {
             compileArgs.compileArgs(jenkinsConfig, jackedConfig);
         }
     }
-    
+    */
+
+    public void clone(JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
+
+        JackedExist jackedExist = new JackedExist();
+        if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
+            Clone.repo(jenkinsConfig);
+            Go.install(jenkinsConfig);
+        }
+        Compile compileArgs = new Compile();
+        compileArgs.compileArgs(jenkinsConfig, jackedConfig);
+
+
+    }    
     /**
      * Pipeline and Buildstep Setup
      */
@@ -140,7 +179,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
         @Override
         public String getDisplayName() {
-            return "Vulnerability scan with jacked";
+            return "Jacked Vulnerability Analyzer";
         }
 
         /*

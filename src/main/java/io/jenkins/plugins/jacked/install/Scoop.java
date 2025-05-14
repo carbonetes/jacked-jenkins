@@ -3,7 +3,7 @@ package io.jenkins.plugins.jacked.install;
 import java.io.IOException;
 
 import hudson.Launcher;
-import io.jenkins.plugins.jacked.binary.Compile;
+import io.jenkins.plugins.jacked.compile.Compile;
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
