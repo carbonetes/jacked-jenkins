@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
-import io.jenkins.plugins.jacked.os.CheckOS;
+// import io.jenkins.plugins.jacked.os.CheckOS;
 import io.jenkins.plugins.jacked.save.FileFormat;
 
 public class SetArgs {
-    private String JACKED = "jacked";
+    // private String JACKED = "jacked";
     private static final String FAILCRITERIA = "--fail-criteria";
     private static final String DIR = "--dir";
     private static final String TAR = "--tar";
