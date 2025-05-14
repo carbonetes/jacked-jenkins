@@ -45,6 +45,14 @@
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
 
+    <!-- ✅ Added this block -->
+    <distributionManagement>
+        <repository>
+            <id>jenkins-releases</id>
+            <url>https://repo.jenkins-ci.org/releases/</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
