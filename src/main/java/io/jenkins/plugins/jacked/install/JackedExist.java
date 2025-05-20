@@ -12,7 +12,7 @@ public class JackedExist {
     public Boolean checkIfExists(FilePath workspace) {
         // CheckVersion checkVersion = new CheckVersion();
         String workspacePath = workspace.getRemote();
-        String version = "v1.9.1-ci"; // checkVersion.getVersion();
+        String version = "v1.9.1-ci-0.0.1"; // checkVersion.getVersion(); // 05-20-2024 temporarily uses present version instead of v1.9.1-ci
         String fileName = "jacked" + version + "-exist.txt";
         String fileContent = "Jacked" + version + " installed on this workspace";
 

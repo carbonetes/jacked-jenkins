@@ -1,5 +1,6 @@
 package io.jenkins.plugins.jacked.scan;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import io.jenkins.plugins.jacked.model.JackedConfig;
@@ -16,19 +17,21 @@ public class SetArgs {
     private static final String CIMODE = "--ci";
     private static final String FILE = "--file";
     private static final String SKIPDBUPDATE = "--skip-db-update";
-    private static final String IGNOREPACKAGENAMES = "--ignore-package-names";
-    private static final String IGNOREVULNCVES = "--ignore-cves";
+
+
+    /* Commented out for now for disabling integration feature 05-20-2024
     private static final String TOKEN = "--token";
     private static final String PLUGIN = "--plugin";
+     */
 
     public String[] scanTypeArgs(JackedConfig jackedConfig, JenkinsConfig jenkinsConfig) {
         ArrayList<String> cmdArgs = new ArrayList<>();
 
         // Get the Go binary path from the JackedConfigscanTypeArgs(jackedConfig)
         String workspaceDir = jenkinsConfig.getWorkspace().getRemote(); // /home/sairen/.jenkins/workspace/jacked pipeline
-        String goTmpDir = workspaceDir + "/go"; // Static folder for Go binary
+        String goTmpDir = Paths.get(workspaceDir, "go").toString(); // Static folder for Go binary
 
-        String goBinaryPath = goTmpDir + "/bin/go";
+        String goBinaryPath = Paths.get(goTmpDir, "bin", "go").toString();
         // Ensure the Go binary path is valid
         if (goBinaryPath == null || goBinaryPath.isEmpty()) {
             throw new IllegalArgumentException("Go binary path is not set in JackedConfig.");
@@ -66,24 +69,16 @@ public class SetArgs {
         cmdArgs.add(FAILCRITERIA);
         cmdArgs.add(jackedConfig.getSeverityType());
 
+        /* Commented out for now for disabling integration feature 05-20-2024
         cmdArgs.add(TOKEN);
         cmdArgs.add(jackedConfig.getToken());
 
         cmdArgs.add(PLUGIN);
         cmdArgs.add("jenkins");
+        */
 
         if (Boolean.TRUE.equals(jackedConfig.getSkipDbUpdate())) {
             cmdArgs.add(SKIPDBUPDATE);
-        }
-
-        if (jackedConfig.getIgnorePackageNames() != null && !jackedConfig.getIgnorePackageNames().isEmpty()) {
-            cmdArgs.add(IGNOREPACKAGENAMES);
-            cmdArgs.add(jackedConfig.getIgnorePackageNames());
-        }
-
-        if (jackedConfig.getIgnoreCves() != null && !jackedConfig.getIgnoreCves().isEmpty()) {
-            cmdArgs.add(IGNOREVULNCVES);
-            cmdArgs.add(jackedConfig.getIgnoreCves());
         }
 
         // Output file

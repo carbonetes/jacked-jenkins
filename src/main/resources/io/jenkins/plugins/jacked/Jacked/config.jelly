@@ -3,9 +3,6 @@
 
   <f:section title="Jacked Configuration">
 
-    <f:entry title="Token" field="token">
-      <f:textbox name="token" />
-    </f:entry>
   
     <f:entry title="Scan Type" field="scanType">
       <f:select />
@@ -17,14 +14,6 @@
 
     <f:entry title="Fail Criteria Severity" field="severityType">
       <f:select />
-    </f:entry>
-
-    <f:entry title="Ignore Package Names" field="ignorePackageNames">
-      <f:textbox name="ignorePackageNames" />
-    </f:entry>
-    
-    <f:entry title="Ignore CVEs" field="ignoreCves">
-      <f:textbox name="ignoreCves" />
     </f:entry>
 
     <f:entry field="skipFail">
