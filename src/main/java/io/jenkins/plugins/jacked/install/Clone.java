@@ -22,17 +22,17 @@ public class Clone {
                 destDir.deleteRecursive();
             }
 
-            listener.getLogger().println("Cloning repository and checking out tag v1.9.1-ci...");
+            listener.getLogger().println("Cloning repository and checking out tag v1.9.1-ci-0.0.1..."); // v1.9.1-ci
 
             // Clone the repository without checkout
             Git.cloneRepository()
             .setURI("https://github.com/carbonetes/jacked.git")
             .setDirectory(new File(destDir.getRemote()))
-            .setBranch("refs/tags/v1.9.1-ci")
+            .setBranch("refs/tags/v1.9.1-ci-0.0.1") // v1.9.1-ci
             .call();
         
 
-            listener.getLogger().println("Repository cloned and tag v1.9.1-ci checked out at: " + destDir.getRemote());
+            listener.getLogger().println("Repository cloned and tag v1.9.1-ci-0.0.1 checked out at: " + destDir.getRemote()); // v1.9.1-ci
         } catch (GitAPIException e) {
             listener.getLogger().println("Error during repository clone or checkout: " + e.getMessage());
             e.printStackTrace(listener.getLogger());

@@ -30,12 +30,12 @@
          child.scm.url.inherit.append.path="false">
         <connection>scm:git:https://github.com/${gitHubRepo}</connection>
         <developerConnection>scm:git:https://github.com/${gitHubRepo}</developerConnection>
-        <tag>1.5.0</tag>
+        <tag>1.5.1</tag>
         <url>https://github.com/${gitHubRepo}</url>
     </scm>
 
     <properties>
-        <revision>1.5.0</revision>
+        <revision>1.5.1</revision>
         <changelist></changelist> <!-- remove -SNAPSHOT for release -->
 
         <!-- Minimum supported Jenkins version -->
