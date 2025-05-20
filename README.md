@@ -37,8 +37,6 @@ Provides the following:
 - Saves Stored Values JSON File for Environment Variables. `jackedTmpDir/jacked_file.json`
 
 # Plugin Configuration Fields and Descriptions
-## Token
-<b>Input: </b> Generated Personal Access Token from [Carbonetes](https://www.carbonetes.com/). Sign-up [here](https://app.carbonetes.com/register).
 ## Scan Type
 <b>Description: </b>Specified the input on scan field based on the selected scan type.
 <br>
@@ -59,15 +57,6 @@ Provides the following:
 - Low
 - Negligible
 - Unknown
-## Ignore Package Names
-<b>Usage:</b> Ignore the following package names when scanning. Leave blank if not using.
-<br>
-Example Input Format: dpkg,tar,gzip,...
-## Ignore CVEs
-<b>Usage:</b> Ignore the following CVEs when scanning. Leave blank if not using.
-<br>
-Example Input Format: CVE-2022-24775,CVE-2022-1304,TEMP-0000000-6F6CD4,...
-
 
 ## Skip Build Fail
 Default value is `false / unchecked`.
@@ -87,15 +76,13 @@ pipeline {
         stage('Jacked Scan') {
             steps {
                 script {
-                    token: '', // Generated from https://app.carbonetes.com/
-                    jacked scanType: 'image',           // Choose Scan Type: image, directory, tar, or sbom.
-                    scanName: 'ubuntu',                 // Input: Image name, Directory path, tar file path, or sbom file path.
-                    severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
-                                                        // Severity: critical, high, medium, low, negligible, unknown.
-                    skipFail: false,                    // Default as false. Skip build to fail based on the assessment.
-                    skipDbUpdate: false,                // Default as false. Skip Database Update when scanning.
-                    ignorePackageNames: '',             // Ignore Package names when scanning... e.g. input: dpkg,tar,bash,...
-                    ignoreCves: ''                      // Ignore CVES when scanning... e.g. input: CVE-2022-1271,CVE-2022-3715,CVE-2022-1664,...
+                    jacked(
+                        scanType: 'image',           // Choose Scan Type: image, directory, tar, or sbom.
+                        scanName: 'ubuntu',          // Input: Image name, Directory path, tar file path, or sbom file path.
+                        severityType: 'high',        // Threshold to fail the build.
+                        skipFail: false,             // Default as false.
+                        skipDbUpdate: false          // Default as false.
+                    )
                 }
             }
         }
@@ -136,15 +123,12 @@ stage('Jacked Scan') {
     steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { // Prevents other stages to be skipped when JACKED ASSESSMENT is failed
             script {
-                token: '', // Generated from https://app.carbonetes.com/
                 jacked scanType: 'images',          // Choose Scan Type: image, directory, tar, or sbom.
                 scanName: 'alpine',                 // Input: Image name, Directory path, tar file path, or sbom file path.
                 severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                     // Severity: critical, high, medium, low, negligible, unknown.
                 skipFail: false,                    // Default as false. Skip build to fail based on the assessment.
                 skipDbUpdate: false,                // Default as false. Skip Database Update when scanning.
-                ignorePackageNames: '',             // Ignore Package names when scanning... e.g. input: dpkg,tar,bash,...
-                ignoreCves: ''                      // Ignore CVES when scanning... e.g. input: CVE-2022-1271,CVE-2022-3715,CVE-2022-1664,...
             }
         }
     }
@@ -233,15 +217,12 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     script {
-                        token: '', // Generated from https://app.carbonetes.com/
                         jacked scanType: 'image',       // Choose Scan Type: image, directory, tar, or sbom.
                         scanName: 'alpine',             // Input: Image name, Directory path, tar file path, or sbom file path.
                         severityType: 'high',           // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                         // Severity: critical, high, medium, low, negligible, unknown.
                         skipFail: false,                // Default as false. Skip build to fail based on the assessment.
                         skipDbUpdate: false,            // Default as false. Skip Database Update when scanning.
-                        ignorePackageNames: '',         // Ignore Package names when scanning... e.g. input: dpkg,tar,bash,...
-                        ignoreCves: ''                  // Ignore CVES when scanning... e.g. input: CVE-2022-1271,CVE-2022-3715,CVE-2022-1664,...
                         
                     }
                 }

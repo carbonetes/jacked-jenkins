@@ -20,7 +20,7 @@ public class Go {
         // Replace spaces with underscores for safe directory handling
         goTmpDir = goTmpDir.replace(" ", "_");
 
-        String goUrl = "https://go.dev/dl/go1.22.4.linux-amd64.tar.gz";
+        String goUrl = "https://go.dev/dl/go1.22.4.linux-amd64.tar.gz"; // Uses 1.22.4 Go Version
         String downloadPath = goTmpDir + "/go.tar.gz";
         String extractDir = goTmpDir; // final go path = goTmpDir/go
 

@@ -39,7 +39,8 @@ import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
 /**
- * @author Sairen Christian Buerano - Carbonetes
+ * @author Sairen Christian Buerano
+ * @author Carbonetes
  */
 @Getter
 @Setter
@@ -52,9 +53,9 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanType;
     private Boolean skipFail;
     private Boolean skipDbUpdate;
-    private String ignorePackageNames;
-    private String ignoreCves;
+    /* Commented out for now for disabling integration feature 05-20-2024
     private String token;
+    */
     private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
@@ -67,9 +68,9 @@ public class Jacked extends Builder implements SimpleBuildStep {
         String scanType, 
         Boolean skipFail, 
         Boolean skipDbUpdate, 
-        String ignorePackageNames, 
-        String ignoreCves, 
+        /* Commented out for now for disabling integration feature 05-20-2024
         String token,
+        */
         Map<String, String> 
         content, 
         JackedConfig 
@@ -81,20 +82,20 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.scanType = scanType;
         this.skipFail = skipFail;
         this.skipDbUpdate = skipDbUpdate;
-        this.ignorePackageNames = ignorePackageNames;
-        this.ignoreCves = ignoreCves;
         this.content = content;
+        /* Commented out for now for disabling integration feature 05-20-2024
         this.token = token;
+        */
         this.jackedConfig = new JackedConfig(
             scanDest, 
             scanName, 
             severityType, 
             scanType, 
             skipFail, 
-            skipDbUpdate,
-            ignorePackageNames, 
-            ignoreCves,
+            skipDbUpdate
+            /* Commented out for now for disabling integration feature 05-20-2024
             token
+            */
         );
     }
 
