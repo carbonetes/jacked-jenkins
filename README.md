@@ -20,11 +20,11 @@ This Jenkins plugin installs Jacked in the job’s workspace and runs a scan.
 It automatically sets up all required dependencies to run Jacked.
 
 # Usage as add build step
-<img src="assets/add-build-step.png" alt="Jacked plugin" />
+<img src="assets/add-build-step2.png" alt="Jacked plugin" />
 
 ## Plugin Configuration
 
-<img src="assets/configuration.png" alt="Jacked plugin configuration" />
+<img src="assets/add-build-step.png" alt="Jacked plugin configuration" />
 
 # Output
 <img src="assets/sample_fail_output.png" alt="Jacked plugin configuration" />
