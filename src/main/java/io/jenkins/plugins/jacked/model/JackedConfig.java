@@ -14,9 +14,7 @@ public class JackedConfig {
     private String scanType;
     private Boolean skipFail;
     private Boolean skipDbUpdate;
-    /* Disabling integration feature 05-20-2024
     private String token;
-    */
     private Map<String, String> content;
     
     public JackedConfig(
@@ -25,10 +23,8 @@ public class JackedConfig {
         String severityType, 
         String scanType, 
         Boolean skipFail, 
-        Boolean skipDbUpdate
-        /* Disabling integration feature 05-20-2024
+        Boolean skipDbUpdate,
         String token
-        */
     ){
         this.scanDest = scanDest;
         this.scanName = scanName;
@@ -36,9 +32,7 @@ public class JackedConfig {
         this.scanType = scanType;
         this.skipFail = skipFail;
         this.skipDbUpdate = skipDbUpdate;
-        /* Disabling integration feature 05-20-2024
         this.token = token;
-        */
     }
 
 }
