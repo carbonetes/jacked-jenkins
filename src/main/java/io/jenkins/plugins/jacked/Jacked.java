@@ -10,6 +10,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
 
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -53,9 +54,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanType;
     private Boolean skipFail;
     private Boolean skipDbUpdate;
-    /* Commented out for now for disabling integration feature 05-20-2024
     private String token;
-    */
     private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
@@ -68,9 +67,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         String scanType, 
         Boolean skipFail, 
         Boolean skipDbUpdate, 
-        /* Commented out for now for disabling integration feature 05-20-2024
         String token,
-        */
         Map<String, String> 
         content, 
         JackedConfig 
@@ -83,19 +80,15 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.skipFail = skipFail;
         this.skipDbUpdate = skipDbUpdate;
         this.content = content;
-        /* Commented out for now for disabling integration feature 05-20-2024
         this.token = token;
-        */
         this.jackedConfig = new JackedConfig(
             scanDest, 
             scanName, 
             severityType, 
             scanType, 
             skipFail, 
-            skipDbUpdate
-            /* Commented out for now for disabling integration feature 05-20-2024
+            skipDbUpdate,
             token
-            */
         );
     }
 
@@ -107,7 +100,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
         JenkinsConfig jenkinsConfig = new JenkinsConfig(run, workspace, env, launcher, listener);
         // Perform installation based on the OS
         // installJacked(jenkinsConfig);
-        clone(jenkinsConfig);
+        checkInputs(jenkinsConfig);
+        setup(jenkinsConfig);
     }
     
     /* 
@@ -147,18 +141,29 @@ public class Jacked extends Builder implements SimpleBuildStep {
     }
     */
 
-    public void clone(JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
+    public void setup(JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
         
         JackedExist jackedExist = new JackedExist();
         if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
-            Clone.repo(jenkinsConfig);
-            Go.install(jenkinsConfig);
+            InstallBinary.installJacked(jenkinsConfig, jackedConfig);
+            //Go.install(jenkinsConfig);
         }
         Compile compileArgs = new Compile();
         compileArgs.compileArgs(jenkinsConfig, jackedConfig);
-
-
     }    
+
+    public void checkInputs(JenkinsConfig jenkinsConfig) throws AbortException {
+        if (jackedConfig.getScanName() == null || jackedConfig.getScanName().isEmpty()) {
+            throw new AbortException("Scan Name is required.");
+        }
+        if (jackedConfig.getSeverityType() == null || jackedConfig.getSeverityType().isEmpty()) {
+            throw new AbortException("Severity Type is required.");
+        }
+        if (jackedConfig.getScanType() == null || jackedConfig.getScanType().isEmpty()) {
+            throw new AbortException("Scan Type is required.");
+        }
+
+    }
     /**
      * Pipeline and Buildstep Setup
      */

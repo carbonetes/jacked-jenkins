@@ -28,7 +28,7 @@ public class ExecuteBinary {
                 .cmds(cmd)
                 .stdout(stdoutStream)
                 .stderr(stderrStream)
-                .pwd(jenkinsConfig.getWorkspace().child("jackedTmpDir").child("jacked"))
+                .pwd(jenkinsConfig.getWorkspace()) // <-- Fixed: use workspace root
                 .join();
 
         String stdout = new String(stdoutStream.toByteArray(), StandardCharsets.UTF_8);
