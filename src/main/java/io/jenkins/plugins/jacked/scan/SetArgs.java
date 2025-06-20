@@ -13,7 +13,6 @@ public class SetArgs {
     private static final String FAILCRITERIA = "--fail-criteria";
     private static final String DIR = "--dir";
     private static final String TAR = "--tar";
-    private static final String SBOM = "--sbom";
     private static final String CIMODE = "--ci";
     private static final String FILE = "--file";
     private static final String SKIPDBUPDATE = "--skip-db-update";
@@ -56,10 +55,6 @@ public class SetArgs {
                 break;
             case "tar":
                 cmdArgs.add(TAR);
-                cmdArgs.add(jackedConfig.getScanName());
-                break;
-            case "sbom":
-                cmdArgs.add(SBOM);
                 cmdArgs.add(jackedConfig.getScanName());
                 break;
             default:
