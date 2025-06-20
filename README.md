@@ -44,9 +44,8 @@ Provides the following:
 - `Image`: Provide the image to be scanned.
 - `Directory`: Provide the target directory path to be scanned.
 - `Tar File`: Provide the target tar file path to be scanned.
-- `SBOM File`: Provide the target [Diggity](https://github.com/carbonetes/diggity) JSON Format SBOM file path to be scanned.
 ## Scan
-<b>Input: </b> Image name, Directory path, tar file path, or sbom file path.
+<b>Input: </b> Image name, Directory path, or tar file path.
 ## Fail Criteria Severity
 <b>Description: </b>Select a threshold that will fail the build when equal to or above the severity found in the results. 
 <br>
@@ -77,8 +76,8 @@ pipeline {
             steps {
                 script {
                     jacked(
-                        scanType: 'image',           // Choose Scan Type: image, directory, tar, or sbom.
-                        scanName: 'ubuntu',          // Input: Image name, Directory path, tar file path, or sbom file path.
+                        scanType: 'image',           // Choose Scan Type: image, directory, or tar.
+                        scanName: 'ubuntu',          // Input: Image name, Directory path, or tar file path.
                         severityType: 'high',        // Threshold to fail the build.
                         skipFail: false,             // Default as false.
                         skipDbUpdate: false          // Default as false.
@@ -123,8 +122,8 @@ stage('Jacked Scan') {
     steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { // Prevents other stages to be skipped when JACKED ASSESSMENT is failed
             script {
-                jacked scanType: 'images',          // Choose Scan Type: image, directory, tar, or sbom.
-                scanName: 'alpine',                 // Input: Image name, Directory path, tar file path, or sbom file path.
+                jacked scanType: 'images',          // Choose Scan Type: image, directory, or tar.
+                scanName: 'alpine',                 // Input: Image name, Directory path, or tar file path.
                 severityType: 'high',               // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                     // Severity: critical, high, medium, low, negligible, unknown.
                 skipFail: false,                    // Default as false. Skip build to fail based on the assessment.
@@ -217,8 +216,8 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     script {
-                        jacked scanType: 'image',       // Choose Scan Type: image, directory, tar, or sbom.
-                        scanName: 'alpine',             // Input: Image name, Directory path, tar file path, or sbom file path.
+                        jacked scanType: 'image',       // Choose Scan Type: image, directory, or tar.
+                        scanName: 'alpine',             // Input: Image name, Directory path, or tar file path.
                         severityType: 'high',           // Select a threshold that will fail the build when equal to or above the severity found in the results. 
                                                         // Severity: critical, high, medium, low, negligible, unknown.
                         skipFail: false,                // Default as false. Skip build to fail based on the assessment.
