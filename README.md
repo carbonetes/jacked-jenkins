@@ -69,6 +69,7 @@ pipeline {
                         scanName: 'ubuntu',          // Input: image:tag, filesystem dir path, or tarball file path.
                         severityType: 'high',        // Choose Fail Criteria Severity as a threshold.
                         skipFail: false,             // Default as false. Always Build Success [Not recommended to set true!]
+                        token: ''                    // Personal Access Token
                     )
                 }
             }
