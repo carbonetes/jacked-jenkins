@@ -27,8 +27,10 @@ public class SetArguments {
         String binaryPath = Paths.get(workspaceDir, "carbonetes-ci").toString();
         String CarbonetesCI = binaryPath;
 
-        String INPUTVALUE = jackedConfig.getScanName();
-        String SCANTYPEVALUE = jackedConfig.getScanType();
+        String SCANTYPEVALUE = jackedConfig.getScanType() != null ? jackedConfig.getScanType() : "";
+        String INPUTVALUE = jackedConfig.getScanName() != null ? jackedConfig.getScanName() : "";
+        String TOKENINPUT = jackedConfig.getToken() != null ? jackedConfig.getToken() : "";
+        String SEVERITYTYPEINPUT = jackedConfig.getSeverityType() != null ? jackedConfig.getSeverityType() : "";
 
         // ANALYZER
         cmdArgs.add(CarbonetesCI);
@@ -42,11 +44,11 @@ public class SetArguments {
         cmdArgs.add(SCANTYPEVALUE);
 
         cmdArgs.add(FAILCRITERIA);
-        cmdArgs.add(jackedConfig.getSeverityType());
+        cmdArgs.add(SEVERITYTYPEINPUT);
 
         // API
         cmdArgs.add(TOKEN);
-        cmdArgs.add(jackedConfig.getToken());
+        cmdArgs.add(TOKENINPUT);
 
         cmdArgs.add(PLUGIN);
         cmdArgs.add("jenkins");
