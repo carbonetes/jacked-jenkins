@@ -48,7 +48,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String scanType;
     private Boolean skipFail;
     private String token;
-    private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
@@ -59,9 +58,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         String severityType,
         String scanType, 
         Boolean skipFail, 
-        String token,
-        Map<String, String> 
-        content, 
+        String token, 
         JackedConfig 
         jackedConfig
     ){
@@ -70,7 +67,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.severityType = severityType;
         this.scanType = scanType;
         this.skipFail = skipFail;
-        this.content = content;
         this.token = token;
         this.jackedConfig = new JackedConfig(
             scanDest, 
