@@ -33,9 +33,6 @@ public class SetArguments {
         String INPUTVALUE = jackedConfig.getScanName() != null ? jackedConfig.getScanName() : "";
         String TOKENINPUT = jackedConfig.getToken() != null ? jackedConfig.getToken() : "";
         String SEVERITYTYPEINPUT = jackedConfig.getSeverityType() != null ? jackedConfig.getSeverityType() : "";
-        if (!jackedConfig.getSkipFail().booleanValue()) {
-            throw new AbortException(Constants.CI_FAILURE + " Skip Fail should be boolean value only.");
-        }
 
         // ANALYZER
         cmdArgs.add(CarbonetesCI);
@@ -63,6 +60,8 @@ public class SetArguments {
 
         if (jackedConfig.getSkipFail()) {
             cmdArgs.add(SKIPFAIL);
+        } else {
+            jackedConfig.setSkipFail(false);
         }
 
 
