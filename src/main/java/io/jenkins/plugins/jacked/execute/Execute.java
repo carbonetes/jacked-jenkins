@@ -39,7 +39,7 @@ public class Execute {
 
         // Extract the line containing '#CI_FAILED' or Constants.CI_FAILURE
         if (ret != 0 || Boolean.FALSE.equals(jackedConfig.getSkipFail()) && 
-            (stdout.toLowerCase().contains(Constants.CI_FAILURE) || stderr.toLowerCase().contains(Constants.CI_FAILURE) )) {
+            (stdout.contains(Constants.CI_FAILURE) || stderr.contains(Constants.CI_FAILURE) )) {
             
             buildStatus = "failed";
 
@@ -54,7 +54,7 @@ public class Execute {
             if (assessmentSummary == null) {
                 lines = stderr.split("\\r?\\n");
                 for (String line : lines) {
-                if (line.toLowerCase().contains(Constants.CI_FAILURE)) { 
+                if (line.contains(Constants.CI_FAILURE)) { 
                         assessmentSummary = line.trim();
                         break;
                     }
@@ -64,7 +64,7 @@ public class Execute {
             buildStatus = "success";
         }
 
-        return new BuildConfig(ret, buildStatus, assessmentSummary);
+        return new BuildConfig(ret, buildStatus, assessmentSummary, jackedConfig.getSkipFail(), jenkinsConfig.getListener());
     }
 
     private boolean containsNull(String[] array) {
