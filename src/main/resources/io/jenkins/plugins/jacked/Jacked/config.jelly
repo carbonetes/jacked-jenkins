@@ -21,7 +21,7 @@
 
     <f:entry field="skipFail">
       <f:checkbox default="false"/>
-      <label>${% Always Build Success (Not recommended to check this!)}</label>
+      <label>${% Always Build Success [Not recommended to check this!]}</label>
     </f:entry>
 
   </f:section>
