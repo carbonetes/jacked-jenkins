@@ -10,6 +10,7 @@ public class SetArguments {
     // Binary: Carbonetes-CI Command Flags
     // ANALYZER
     private static final String ANALYZER = "--analyzer";
+    private static final String INPUT = "--input";
     private static final String JACKED = "jacked";
     private static final String SCANTYPE = "--scan-type";
     private static final String FAILCRITERIA = "--fail-criteria";
@@ -25,31 +26,24 @@ public class SetArguments {
         String binaryPath = Paths.get(workspaceDir, "carbonetes-ci").toString();
         String CarbonetesCI = binaryPath;
 
+        String INPUTVALUE = jackedConfig.getScanName();
+        String SCANTYPEVALUE = jackedConfig.getScanType();
+
+        // ANALYZER
         cmdArgs.add(CarbonetesCI);
         cmdArgs.add(ANALYZER);
         cmdArgs.add(JACKED);
 
-        String INPUT = jackedConfig.getScanName();
+        cmdArgs.add(INPUT);
+        cmdArgs.add(INPUTVALUE);
 
-        // Scan type-specific arguments
-        switch (jackedConfig.getScanType()) {
-            case "image":
-                cmdArgs.add(SCANTYPE);
-                cmdArgs.add(INPUT);
-                break;
-            case "directory":
-                cmdArgs.add(SCANTYPE);
-                cmdArgs.add(INPUT);
-                break;
-            case "tar":
-                cmdArgs.add(SCANTYPE);
-                cmdArgs.add(INPUT);
-                break;
-        }
+        cmdArgs.add(SCANTYPE);
+        cmdArgs.add(SCANTYPEVALUE);
 
         cmdArgs.add(FAILCRITERIA);
         cmdArgs.add(jackedConfig.getSeverityType());
 
+        // API
         cmdArgs.add(TOKEN);
         cmdArgs.add(jackedConfig.getToken());
 
