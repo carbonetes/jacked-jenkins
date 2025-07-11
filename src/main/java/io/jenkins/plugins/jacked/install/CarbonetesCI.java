@@ -8,7 +8,7 @@ import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
 public class CarbonetesCI {
 
-    public static void install(JenkinsConfig jenkinsConfig, JackedConfig diggityConfig)
+    public static void install(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
             throws InterruptedException, IOException {
         // Get the workspace root
         FilePath workspace = jenkinsConfig.getWorkspace();
@@ -41,7 +41,7 @@ public class CarbonetesCI {
 
         jenkinsConfig.getListener().getLogger().println(" Binary installed successfully to: " + binaryPath.getRemote());
 
-        setPath(jenkinsConfig, diggityConfig, binaryPath.getRemote());
+        setPath(jenkinsConfig, jackedConfig, binaryPath.getRemote());
     }
 
     public static void setPath(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig, String path)
