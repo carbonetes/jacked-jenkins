@@ -2,8 +2,6 @@ package io.jenkins.plugins.jacked;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
-import java.util.Map;
-
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
