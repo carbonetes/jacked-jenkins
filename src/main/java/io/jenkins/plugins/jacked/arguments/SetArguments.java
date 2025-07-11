@@ -14,6 +14,7 @@ public class SetArguments {
     private static final String JACKED = "jacked";
     private static final String SCANTYPE = "--scan-type";
     private static final String FAILCRITERIA = "--fail-criteria";
+    private static final String SKIPFAIL = "--skip-fail";
     // API
     private static final String TOKEN = "--token";
     private static final String PLUGIN = "--plugin-type";
@@ -52,6 +53,10 @@ public class SetArguments {
 
         cmdArgs.add(ENVIRONMENT);
         cmdArgs.add("test");
+
+        if (jackedConfig.getSkipFail()) {
+            cmdArgs.add(SKIPFAIL);
+        }
 
 
         return cmdArgs.toArray(new String[0]);
