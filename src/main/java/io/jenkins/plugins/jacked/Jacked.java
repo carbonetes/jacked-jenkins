@@ -1,16 +1,12 @@
 package io.jenkins.plugins.jacked;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.AccessDeniedException;
-import java.util.Map;
-
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.verb.POST;
 
-import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -24,12 +20,8 @@ import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.jacked.compile.Compile;
-import io.jenkins.plugins.jacked.install.Clone;
-import io.jenkins.plugins.jacked.install.Go;
-import io.jenkins.plugins.jacked.install.InstallBinary;
-import io.jenkins.plugins.jacked.install.JackedExist;
-import io.jenkins.plugins.jacked.install.Scoop;
-import io.jenkins.plugins.jacked.os.CheckOS;
+import io.jenkins.plugins.jacked.install.CarbonetesCI;
+import io.jenkins.plugins.jacked.install.Exist;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import lombok.Getter;
@@ -53,9 +45,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
     private String severityType;
     private String scanType;
     private Boolean skipFail;
-    private Boolean skipDbUpdate;
     private String token;
-    private Map<String, String> content;
 
     // Fields in config.jelly must match the parameter names in the
     // "DataBoundConstructor"
@@ -66,10 +56,7 @@ public class Jacked extends Builder implements SimpleBuildStep {
         String severityType,
         String scanType, 
         Boolean skipFail, 
-        Boolean skipDbUpdate, 
-        String token,
-        Map<String, String> 
-        content, 
+        String token, 
         JackedConfig 
         jackedConfig
     ){
@@ -78,8 +65,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
         this.severityType = severityType;
         this.scanType = scanType;
         this.skipFail = skipFail;
-        this.skipDbUpdate = skipDbUpdate;
-        this.content = content;
         this.token = token;
         this.jackedConfig = new JackedConfig(
             scanDest, 
@@ -87,7 +72,6 @@ public class Jacked extends Builder implements SimpleBuildStep {
             severityType, 
             scanType, 
             skipFail, 
-            skipDbUpdate,
             token
         );
     }
@@ -98,72 +82,19 @@ public class Jacked extends Builder implements SimpleBuildStep {
 
         // Initiate Jenkins and Input Config Model
         JenkinsConfig jenkinsConfig = new JenkinsConfig(run, workspace, env, launcher, listener);
-        // Perform installation based on the OS
-        // installJacked(jenkinsConfig);
-        checkInputs(jenkinsConfig);
         setup(jenkinsConfig);
     }
-    
-    /* 
-     Check OS and Install Jacked
-     Performs installation / update process of Jacked Binary inside the workspace based on the operating system.
-     If has the updated version of the binary, installation / update process will be skipped.
-     Unix / Windows
-     */
-    /*
-    public void installJacked(JenkinsConfig jenkinsConfig)
-            throws IOException, InterruptedException {
-        
-        // Call instance method.
-        Scoop scoop = new Scoop();
-        InstallBinary installBinary = new InstallBinary();
-        JackedExist jackedExist = new JackedExist();
-    
-        String osName = CheckOS.osName();
-        jenkinsConfig.getListener().getLogger().println("Jacked Plugin - Running on: " + osName);
-    
-        if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
-            if (Boolean.TRUE.equals(CheckOS.isWindows(osName))) {
-                // Windows Installation Process
-                scoop.checkScoop(jenkinsConfig, jackedConfig);
-            } else {
-                // Unix Installation Process
-                try {
-                    installBinary.installJacked(jenkinsConfig, jackedConfig);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            Compile compileArgs = new Compile();
-            compileArgs.compileArgs(jenkinsConfig, jackedConfig);
-        }
-    }
-    */
 
     public void setup(JenkinsConfig jenkinsConfig) throws IOException, InterruptedException {
         
-        JackedExist jackedExist = new JackedExist();
+        Exist jackedExist = new Exist();
         if (Boolean.FALSE.equals(jackedExist.checkIfExists(jenkinsConfig.getWorkspace()))) {
-            InstallBinary.installJacked(jenkinsConfig, jackedConfig);
-            //Go.install(jenkinsConfig);
+            CarbonetesCI.install(jenkinsConfig, jackedConfig);
         }
         Compile compileArgs = new Compile();
         compileArgs.compileArgs(jenkinsConfig, jackedConfig);
     }    
 
-    public void checkInputs(JenkinsConfig jenkinsConfig) throws AbortException {
-        if (jackedConfig.getScanName() == null || jackedConfig.getScanName().isEmpty()) {
-            throw new AbortException("Scan Name is required.");
-        }
-        if (jackedConfig.getSeverityType() == null || jackedConfig.getSeverityType().isEmpty()) {
-            throw new AbortException("Severity Type is required.");
-        }
-        if (jackedConfig.getScanType() == null || jackedConfig.getScanType().isEmpty()) {
-            throw new AbortException("Scan Type is required.");
-        }
-
-    }
     /**
      * Pipeline and Buildstep Setup
      */
@@ -225,8 +156,8 @@ public class Jacked extends Builder implements SimpleBuildStep {
             return new ListBoxModel(
                 new Option("-- Select --", ""),
                 new Option("Image", "image"),
-                new Option("Directory", "directory"),
-                new Option("Tar File", "tar")
+                new Option("File System", "filesystem"),
+                new Option("Tar Ball", "tarball")
             );
         }
 
