@@ -3,6 +3,8 @@ package io.jenkins.plugins.jacked.arguments;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import hudson.AbortException;
+import io.jenkins.plugins.jacked.constants.Constants;
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
@@ -20,7 +22,7 @@ public class SetArguments {
     private static final String PLUGIN = "--plugin-type";
     private static final String ENVIRONMENT = "--environment-type";
 
-    public String[] scanTypeArgs(JackedConfig jackedConfig, JenkinsConfig jenkinsConfig) {
+    public String[] scanTypeArgs(JackedConfig jackedConfig, JenkinsConfig jenkinsConfig) throws AbortException {
         ArrayList<String> cmdArgs = new ArrayList<>();
 
         String workspaceDir = jenkinsConfig.getWorkspace().getRemote(); // /home/sairen/.jenkins/workspace/jacked pipeline
@@ -31,6 +33,9 @@ public class SetArguments {
         String INPUTVALUE = jackedConfig.getScanName() != null ? jackedConfig.getScanName() : "";
         String TOKENINPUT = jackedConfig.getToken() != null ? jackedConfig.getToken() : "";
         String SEVERITYTYPEINPUT = jackedConfig.getSeverityType() != null ? jackedConfig.getSeverityType() : "";
+        if (!jackedConfig.getSkipFail().booleanValue()) {
+            throw new AbortException(Constants.CI_FAILURE + " Skip Fail should be boolean value only.");
+        }
 
         // ANALYZER
         cmdArgs.add(CarbonetesCI);
