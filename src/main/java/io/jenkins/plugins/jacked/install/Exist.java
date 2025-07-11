@@ -7,14 +7,14 @@ import java.nio.charset.StandardCharsets;
 
 import hudson.FilePath;
 
-public class JackedExist {
+public class Exist {
 
     public Boolean checkIfExists(FilePath workspace) {
-        // CheckVersion checkVersion = new CheckVersion();
+        CheckVersion checkVersion = new CheckVersion();
         String workspacePath = workspace.getRemote();
-        String version = "v1.10.3-ci"; // checkVersion.getVersion(); 
-        String fileName = "jacked" + version + "-exist.txt";
-        String fileContent = "Jacked" + version + " installed on this workspace";
+        String version = checkVersion.getVersion(); 
+        String fileName = "carbonetes-ci" + version + "-exist.txt";
+        String fileContent = "carbonetes-ci" + version + " installed on this workspace";
 
         Boolean fileExists = checkFileExists(workspacePath, fileName);
         if (Boolean.FALSE.equals(fileExists)) {

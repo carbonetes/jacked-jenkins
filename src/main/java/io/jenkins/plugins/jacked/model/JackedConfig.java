@@ -13,7 +13,6 @@ public class JackedConfig {
     private String severityType;
     private String scanType;
     private Boolean skipFail;
-    private Boolean skipDbUpdate;
     private String token;
     private Map<String, String> content;
     
@@ -23,7 +22,6 @@ public class JackedConfig {
         String severityType, 
         String scanType, 
         Boolean skipFail, 
-        Boolean skipDbUpdate,
         String token
     ){
         this.scanDest = scanDest;
@@ -31,7 +29,6 @@ public class JackedConfig {
         this.severityType = severityType;
         this.scanType = scanType;
         this.skipFail = skipFail;
-        this.skipDbUpdate = skipDbUpdate;
         this.token = token;
     }
 
