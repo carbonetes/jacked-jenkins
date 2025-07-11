@@ -1,79 +1,47 @@
 package io.jenkins.plugins.jacked.install;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import hudson.FilePath;
-import hudson.Launcher;
 import io.jenkins.plugins.jacked.compile.Compile;
 import io.jenkins.plugins.jacked.model.JackedConfig;
 import io.jenkins.plugins.jacked.model.JenkinsConfig;
 
 public class InstallBinary {
 
-    public void installJacked(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
-            throws InterruptedException, IOException, URISyntaxException {
-        // Create a temporary directory inside the workspace to store the downloaded
-        // files
-        FilePath jackedTmpDir = jenkinsConfig.getWorkspace().child("jackedTmpDir");
-        jackedTmpDir.mkdirs();
+    public static void installJacked(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
+            throws InterruptedException, IOException {
+        // Get the workspace root
+        FilePath workspace = jenkinsConfig.getWorkspace();
+        // Place the binary directly in the workspace root
+        FilePath binaryFile = workspace.child("jacked");
 
-        // Download the install script
-        String installScriptUrl = "https://raw.githubusercontent.com/carbonetes/jacked/main/install.sh";
-        FilePath installScript = jackedTmpDir.child("install.sh");
-        installScript.copyFrom(new URL(installScriptUrl));
+        // Download the Jacked binary
+        String binaryUrl = "https://github.com/carbonetes/jacked/releases/download/v1.10.3-ci/jacked";
+        binaryFile.copyFrom(new URL(binaryUrl));
 
-        // Set the destination directory where Jacked will be installed
-        FilePath destDir = jackedTmpDir.child("jacked");
-
-        // Launch the install script with custom options using sh
-        String[] shCmd = { "bash", "install.sh", "|", "sh", "-s", "--", "-d", destDir.getRemote() };
-        Launcher.ProcStarter procStarter = jenkinsConfig.getLauncher().launch()
-                .cmds(shCmd)
-                .envs(jenkinsConfig.getEnv())
-                .pwd(jackedTmpDir)
-                .stdin(null)
-                .stdout(jenkinsConfig.getListener())
-                .stderr(jenkinsConfig.getListener().getLogger());
-        int ret = procStarter.start().join();
-
-        // Check if the installation was successful and print a message to the listener
-        if (ret == 0) {
-            jenkinsConfig.getListener().getLogger().println("Jacked Installed Successfully");
-            setPath(jenkinsConfig, jackedConfig);
-        } else {
-            jenkinsConfig.getListener().getLogger().println("Installation failed - error code: " + ret);
+        // Make the binary executable (Linux/Mac)
+        try {
+            binaryFile.chmod(0755);
+        } catch (IOException | InterruptedException e) {
+            jenkinsConfig.getListener().getLogger().println("Warning: Could not set executable permission on Jacked binary.");
         }
+
+        jenkinsConfig.getListener().getLogger().println("Jacked binary downloaded successfully to: " + binaryFile.getRemote());
+
+        // Optionally, set the path or call further setup
+        setPath(jenkinsConfig, jackedConfig, binaryFile.getRemote());
     }
 
-    public void setPath(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig)
+    public static void setPath(JenkinsConfig jenkinsConfig, JackedConfig jackedConfig, String jackedExecutablePath)
             throws IOException, InterruptedException {
 
-        FilePath jackedExecutable = jenkinsConfig.getWorkspace().child("jackedTmpDir");
-        String jackedExecutablePath = jackedExecutable.getRemote();
-        jenkinsConfig.getListener().getLogger().println(jackedExecutablePath);
-        String binPath = "/bin";
+        jenkinsConfig.getListener().getLogger().println("Jacked binary path: " + jackedExecutablePath);
 
-        String[] cmd = new String[] { "sh", "-c",
-                "export PATH=\"" + jackedExecutablePath + binPath + ":$PATH && jacked\"" };
-        Launcher.ProcStarter proc = jenkinsConfig.getLauncher().launch()
-                .cmds(cmd)
-                .envs(jenkinsConfig.getEnv())
-                .pwd(jenkinsConfig.getWorkspace().getRemote())
-                .stdin(null)
-                .stdout(jenkinsConfig.getListener())
-                .stderr(jenkinsConfig.getListener().getLogger());
-        int procCode = proc.join();
-        if (procCode != 0) {
-            jenkinsConfig.getListener().getLogger().println("Failed to set PATH environment variable - error code: " + procCode);
-        } else {
-            jenkinsConfig.getListener().getLogger().println("PATH environment variable has been updated successfully.");
-
-            // Update the compile arguments for scanning from the jackedConfig instance variable
-            Compile compile = new Compile();
-            compile.compileArgs(jenkinsConfig, jackedConfig);
-        }
+        // Optionally, you can update PATH or just use the full path when invoking
+        // Here, just log and call compile as in your original logic
+        Compile compile = new Compile();
+        compile.compileArgs(jenkinsConfig, jackedConfig);
     }
-
 }
