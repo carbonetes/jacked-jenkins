@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class CheckVersion {
 
     public String getVersion() {
-        String repositoryUrl = "https://github.com/carbonetes/jacked";
+        String repositoryUrl = "https://github.com/carbonetes/ci";
         try {
             String latestVersion = getLatestVersion(repositoryUrl);
             return latestVersion;

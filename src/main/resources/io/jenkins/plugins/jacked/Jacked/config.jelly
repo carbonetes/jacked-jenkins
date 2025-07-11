@@ -3,7 +3,7 @@
 
   <f:section title="Jacked Configuration">
   
-    <f:entry title="Token" field="token">
+    <f:entry title="Personal Access Token" field="token">
       <f:textbox name="token" />
     </f:entry>
 
@@ -21,13 +21,8 @@
 
     <f:entry field="skipFail">
       <f:checkbox default="false"/>
-      <label>${%Skip Build Fail}</label>
+      <label>${%Always Build Success [Not Recommended to be checked!]}</label>
     </f:entry>
-    
-    <f:entry field="skipDbUpdate">
-      <f:checkbox default="false"/>
-      <label>${%Skip Database Update.}</label>
-    </f:entry> 
 
   </f:section>
 

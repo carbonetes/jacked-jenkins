@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExecuteJacked {
+public class BuildConfig {
     private int ret;
     private String buildStatus;
     private String assessmentSummary;
 
-    public ExecuteJacked(int ret, String buildStatus, String assessmentSummary) {
+    public BuildConfig(int ret, String buildStatus, String assessmentSummary) {
         this.ret = ret;
         this.buildStatus = buildStatus;
         this.assessmentSummary = assessmentSummary;
